@@ -98,12 +98,25 @@
   @media (max-width: 640px) { .why { grid-template-columns: 1fr; } }
 
   /* 사업 — 로고의 다섯 하트 색을 사업 하나씩에 */
-  .services { list-style: none; padding: 0; margin: 36px 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 16px; }
-  .services li { border: 1px solid var(--line); border-radius: 16px; padding: 24px 24px 26px; display: grid; grid-template-rows: auto auto 1fr; gap: 8px; }
-  .heart { width: 26px; height: 26px; }
+  /* 방과후=분홍, 방학=노랑, 급식=연두, 교육=파랑, 활동가 양성=보라 (-t: 옅은 바탕, -d: 글자용) */
+  .c-pink   { --c: #F2788A; --t: #FDEBEE; --d: #C2485F; }
+  .c-yellow { --c: #FBBF1A; --t: #FFF5D6; --d: #8F6400; }
+  .c-lime   { --c: #B3CE2B; --t: #F2F8DA; --d: #5C7210; }
+  .c-blue   { --c: #7EA7DA; --t: #E8F0FA; --d: #3A67A3; }
+  .c-purple { --c: #A865AE; --t: #F4E9F5; --d: #7E3F86; }
+  .services { list-style: none; padding: 0; margin: 36px 0 0; display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; }
+  .svc { grid-column: span 2; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; display: flex; flex-direction: column; }
+  .svc:nth-child(4), .svc:nth-child(5) { grid-column: span 3; }
+  .svc-art { position: relative; height: 130px; background: var(--c); display: grid; place-items: center; overflow: hidden; }
+  .svc-art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .svc-art svg { width: 76px; height: 61px; }
+  .svc-art svg.bg { position: absolute; width: 160px; height: 128px; right: -32px; bottom: -40px; opacity: .22; }
+  .svc-body { padding: 20px 22px 24px; display: grid; gap: 8px; }
+  .tag { justify-self: start; font-size: 12px; font-weight: 700; letter-spacing: .04em; color: var(--d); background: var(--t); padding: 3px 10px; border-radius: 999px; }
   .services h3 { font-size: 18px; font-weight: 800; }
   .services p { font-size: 15px; color: var(--gray); }
-  .services li.wide { grid-column: 1 / -1; background: var(--wash); border-color: transparent; }
+  @media (max-width: 900px) { .svc, .svc:nth-child(4) { grid-column: span 3; } .svc:nth-child(5) { grid-column: 1 / -1; } }
+  @media (max-width: 600px) { .services { grid-template-columns: 1fr; } .svc, .svc:nth-child(4), .svc:nth-child(5) { grid-column: auto; } .svc-art { height: 110px; } }
 
   /* 확산 흐름 */
   .flow { list-style: none; padding: 0; margin: 36px 0 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; counter-reset: step; }
@@ -156,6 +169,11 @@
 
 <!-- ✏️ 카카오채널 주소를 여기 한 곳만 바꾸면 페이지 전체 버튼에 반영됩니다 -->
 <script>window.KAKAO_URL = "https://pf.kakao.com/_vdkLK";</script>
+
+<!-- 하트 모양 (로고와 같은 모양, 주요 사업 카드에서 재사용) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="heart" viewBox="0 0 100 80"><path d="M0 30 30 0 50 20 70 0 100 30 50 80Z"/></symbol>
+</svg>
 
 <header class="site-header">
   <div class="wrap top">
@@ -217,31 +235,47 @@
     <div class="wrap">
       <p class="eyebrow">WHAT WE DO</p>
       <h2>주요 사업</h2>
+      <!-- ✏️ 사진 넣기: 각 .svc-art 안에 <img src="images/사진이름.jpg" alt="사진 설명"> 을 추가하면 색 블록 위에 사진이 채워집니다 (얼굴 없는 사진) -->
       <ul class="services">
-        <li>
-          <svg class="heart" viewBox="0 0 26 26" aria-hidden="true"><path fill="#F2788A" d="M3 9l10 10 10-10-5-5-5 5-5-5z"/></svg>
-          <h3>방과후 상시돌봄</h3>
-          <p>공공돌봄에서 탈락한 초등 1~6학년 아이들이 하교 후 머무는 마을 돌봄교실 ‘스스로 깨치는 아이들(스깨아)’을 운영합니다.</p>
+        <li class="svc c-pink">
+          <div class="svc-art"><svg class="bg" aria-hidden="true"><use href="#heart" fill="#fff"/></svg><svg aria-hidden="true"><use href="#heart" fill="#fff"/></svg></div>
+          <div class="svc-body">
+            <span class="tag">방과후</span>
+            <h3>방과후 상시돌봄</h3>
+            <p>공공돌봄에서 탈락한 초등 1~6학년 아이들이 하교 후 머무는 마을 돌봄교실 ‘스스로 깨치는 아이들(스깨아)’을 운영합니다.</p>
+          </div>
         </li>
-        <li>
-          <svg class="heart" viewBox="0 0 26 26" aria-hidden="true"><path fill="#F7B500" d="M3 9l10 10 10-10-5-5-5 5-5-5z"/></svg>
-          <h3>방학 종일돌봄</h3>
-          <p>돌봄 공백이 가장 커지는 방학, 맞벌이 가정 아이들을 위한 종일 돌봄교실을 엽니다.</p>
+        <li class="svc c-yellow">
+          <div class="svc-art"><svg class="bg" aria-hidden="true"><use href="#heart" fill="#fff"/></svg><svg aria-hidden="true"><use href="#heart" fill="#fff"/></svg></div>
+          <div class="svc-body">
+            <span class="tag">방학</span>
+            <h3>방학 종일돌봄</h3>
+            <p>돌봄 공백이 가장 커지는 방학, 맞벌이 가정 아이들을 위한 종일 돌봄교실을 엽니다.</p>
+          </div>
         </li>
-        <li>
-          <svg class="heart" viewBox="0 0 26 26" aria-hidden="true"><path fill="#A9C41F" d="M3 9l10 10 10-10-5-5-5 5-5-5z"/></svg>
-          <h3>마을급식·간식</h3>
-          <p>마을 양육자가 직접 식단을 짜고 조리한 방학 점심과 수제 간식으로 아이들의 ‘먹거리 안전망’을 지킵니다.</p>
+        <li class="svc c-lime">
+          <div class="svc-art"><svg class="bg" aria-hidden="true"><use href="#heart" fill="#fff"/></svg><svg aria-hidden="true"><use href="#heart" fill="#fff"/></svg></div>
+          <div class="svc-body">
+            <span class="tag">마을급식</span>
+            <h3>마을급식·간식</h3>
+            <p>마을 양육자가 직접 식단을 짜고 조리한 방학 점심과 수제 간식으로 아이들의 ‘먹거리 안전망’을 지킵니다.</p>
+          </div>
         </li>
-        <li>
-          <svg class="heart" viewBox="0 0 26 26" aria-hidden="true"><path fill="#6F9BD3" d="M3 9l10 10 10-10-5-5-5 5-5-5z"/></svg>
-          <h3>아동 교육·문화 프로그램</h3>
-          <p>목공 새집 만들기, 마을 축제 기획 같은 프로젝트 학습과 마을 영어교실·동아리로, 아이들이 마을의 ‘문제 해결자’로 자랍니다.</p>
+        <li class="svc c-blue">
+          <div class="svc-art"><svg class="bg" aria-hidden="true"><use href="#heart" fill="#fff"/></svg><svg aria-hidden="true"><use href="#heart" fill="#fff"/></svg></div>
+          <div class="svc-body">
+            <span class="tag">교육·문화</span>
+            <h3>아동 교육·문화 프로그램</h3>
+            <p>목공 새집 만들기, 마을 축제 기획 같은 프로젝트 학습과 마을 영어교실·동아리로, 아이들이 마을의 ‘문제 해결자’로 자랍니다.</p>
+          </div>
         </li>
-        <li class="wide">
-          <svg class="heart" viewBox="0 0 26 26" aria-hidden="true"><path fill="#A565A9" d="M3 9l10 10 10-10-5-5-5 5-5-5z"/></svg>
-          <h3>돌봄활동가 양성</h3>
-          <p>‘돌봄 강독 세미나’와 워크숍으로 양육자와 주민을 돌봄활동가로 키웁니다. 이용하던 부모가 운영위원, 마을 강사, 돌봄 기획자로 성장하는 경로를 만듭니다.</p>
+        <li class="svc c-purple">
+          <div class="svc-art"><svg class="bg" aria-hidden="true"><use href="#heart" fill="#fff"/></svg><svg aria-hidden="true"><use href="#heart" fill="#fff"/></svg></div>
+          <div class="svc-body">
+            <span class="tag">활동가 양성</span>
+            <h3>돌봄활동가 양성</h3>
+            <p>‘돌봄 강독 세미나’와 워크숍으로 양육자와 주민을 돌봄활동가로 키웁니다. 이용하던 부모가 운영위원, 마을 강사, 돌봄 기획자로 성장하는 경로를 만듭니다.</p>
+          </div>
         </li>
       </ul>
     </div>
