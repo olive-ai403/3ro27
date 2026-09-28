@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- 후보 C: 분홍 바탕 위 흰 집, 집 안에 하트 -->
+  <rect width="512" height="512" rx="112" fill="#F2788A"/>
+  <path d="M112 250 256 122 400 250V402H112Z" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="28" stroke-linejoin="round"/>
+  <g transform="translate(186 238) scale(1.4)"><path d="M0 30 30 0 50 20 70 0 100 30 50 80Z" fill="#F2788A"/></g>
+</svg>

@@ -23,7 +23,9 @@ DESC="놀며 자라는 아이, 살며 배우는 어른, 함께 돌보는 마을.
 <meta property="og:description" content="$DESC">
 <meta property="og:image" content="$SITE_URL/images/og-image.jpg">
 <meta property="og:url" content="$SITE_URL/">
-<link rel="icon" type="image/png" href="images/favicon.png">
+<link rel="icon" type="image/png" sizes="64x64" href="images/favicon.png">
+<link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
 EOF
   # </style>까지는 <head>, 나머지는 <body>
   awk '{print} /<\/style>/{exit}' index.src.html

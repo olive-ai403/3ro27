@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- 후보 B: 다섯 색 하트 하나 (로고 순서: 파랑·노랑·분홍·연두·보라) -->
+  <defs><clipPath id="b-heart"><path transform="translate(76 136) scale(3.6)" d="M0 30 30 0 50 20 70 0 100 30 50 80Z"/></clipPath></defs>
+  <rect width="512" height="512" rx="112" fill="#FFFFFF"/>
+  <g clip-path="url(#b-heart)">
+    <rect x="76"  y="136" width="73" height="288" fill="#7EA7DA"/>
+    <rect x="148" y="136" width="73" height="288" fill="#FBBF1A"/>
+    <rect x="220" y="136" width="73" height="288" fill="#F2788A"/>
+    <rect x="292" y="136" width="73" height="288" fill="#B3CE2B"/>
+    <rect x="364" y="136" width="72" height="288" fill="#A865AE"/>
+  </g>
+</svg>

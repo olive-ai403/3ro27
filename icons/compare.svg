@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1020 470" font-family="Malgun Gothic, Apple SD Gothic Neo, sans-serif">
+<rect width="1020" height="470" fill="#F7F6F3"/>
+<defs>
+<symbol id="ia" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#FFFFFF"/>
+  <g transform="translate(211 104) scale(.9)"><path d="M0 30 30 0 50 20 70 0 100 30 50 80Z" fill="#F2788A"/></g>
+  <g transform="translate(151 164) scale(.9)"><path d="M0 30 30 0 50 20 70 0 100 30 50 80Z" fill="#FBBF1A"/></g>
+  <g transform="translate(271 164) scale(.9)"><path d="M0 30 30 0 50 20 70 0 100 30 50 80Z" fill="#B3CE2B"/></g>
+  <g transform="translate(91 224) scale(.9)"><path d="M0 30 30 0 50 20 70 0 100 30 50 80Z" fill="#7EA7DA"/></g>
+  <g transform="translate(331 224) scale(.9)"><path d="M0 30 30 0 50 20 70 0 100 30 50 80Z" fill="#A865AE"/></g>
+  <path d="M146 330V404H222V372A34 34 0 0 1 290 372V404H366V330" fill="none" stroke="#3F4044" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+</symbol>
+<symbol id="ib" viewBox="0 0 512 512">
+  <defs><clipPath id="b-heart"><path transform="translate(76 136) scale(3.6)" d="M0 30 30 0 50 20 70 0 100 30 50 80Z"/></clipPath></defs>
+  <rect width="512" height="512" rx="112" fill="#FFFFFF"/>
+  <g clip-path="url(#b-heart)">
+    <rect x="76"  y="136" width="73" height="288" fill="#7EA7DA"/>
+    <rect x="148" y="136" width="73" height="288" fill="#FBBF1A"/>
+    <rect x="220" y="136" width="73" height="288" fill="#F2788A"/>
+    <rect x="292" y="136" width="73" height="288" fill="#B3CE2B"/>
+    <rect x="364" y="136" width="72" height="288" fill="#A865AE"/>
+  </g>
+</symbol>
+<symbol id="ic" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#F2788A"/>
+  <path d="M112 250 256 122 400 250V402H112Z" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="28" stroke-linejoin="round"/>
+  <g transform="translate(186 238) scale(1.4)"><path d="M0 30 30 0 50 20 70 0 100 30 50 80Z" fill="#F2788A"/></g>
+</symbol>
+</defs>
+<rect x="36" y="36" width="288" height="288" rx="66" fill="#E4E2E0"/>
+<use href="#ia" x="38" y="38" width="284" height="284"/>
+<text x="180" y="24" text-anchor="middle" font-size="18" font-weight="700" fill="#3F4044">후보 A</text>
+<use href="#ia" x="40" y="350" width="64" height="64"/>
+<use href="#ia" x="124" y="366" width="32" height="32"/>
+<use href="#ia" x="176" y="374" width="16" height="16"/>
+<text x="40" y="444" font-size="13" fill="#6D6E71">64px · 32px · 16px</text>
+<rect x="376" y="36" width="288" height="288" rx="66" fill="#E4E2E0"/>
+<use href="#ib" x="378" y="38" width="284" height="284"/>
+<text x="520" y="24" text-anchor="middle" font-size="18" font-weight="700" fill="#3F4044">후보 B</text>
+<use href="#ib" x="380" y="350" width="64" height="64"/>
+<use href="#ib" x="464" y="366" width="32" height="32"/>
+<use href="#ib" x="516" y="374" width="16" height="16"/>
+<text x="380" y="444" font-size="13" fill="#6D6E71">64px · 32px · 16px</text>
+<rect x="716" y="36" width="288" height="288" rx="66" fill="#E4E2E0"/>
+<use href="#ic" x="718" y="38" width="284" height="284"/>
+<text x="860" y="24" text-anchor="middle" font-size="18" font-weight="700" fill="#3F4044">후보 C</text>
+<use href="#ic" x="720" y="350" width="64" height="64"/>
+<use href="#ic" x="804" y="366" width="32" height="32"/>
+<use href="#ic" x="856" y="374" width="16" height="16"/>
+<text x="720" y="444" font-size="13" fill="#6D6E71">64px · 32px · 16px</text>
+</svg>

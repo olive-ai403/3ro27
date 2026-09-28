@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- 후보 A: 하트 지붕 집 (로고 심볼을 아이콘 비율로) -->
+  <rect width="512" height="512" rx="112" fill="#FFFFFF"/>
+  <g transform="translate(211 104) scale(.9)"><path d="M0 30 30 0 50 20 70 0 100 30 50 80Z" fill="#F2788A"/></g>
+  <g transform="translate(151 164) scale(.9)"><path d="M0 30 30 0 50 20 70 0 100 30 50 80Z" fill="#FBBF1A"/></g>
+  <g transform="translate(271 164) scale(.9)"><path d="M0 30 30 0 50 20 70 0 100 30 50 80Z" fill="#B3CE2B"/></g>
+  <g transform="translate(91 224) scale(.9)"><path d="M0 30 30 0 50 20 70 0 100 30 50 80Z" fill="#7EA7DA"/></g>
+  <g transform="translate(331 224) scale(.9)"><path d="M0 30 30 0 50 20 70 0 100 30 50 80Z" fill="#A865AE"/></g>
+  <path d="M146 330V404H222V372A34 34 0 0 1 290 372V404H366V330" fill="none" stroke="#3F4044" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
