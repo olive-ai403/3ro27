@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <!-- maskable용: 주색 배경을 가장자리까지 채움. 심볼은 icon-scr.svg 도형 그대로, 가운데 기준 0.9배 (안전 영역 반지름 204.8px 안, 최대 179px) -->
+  <rect width="512" height="512" fill="#F2788A"/>
+  <g transform="translate(256 256) scale(.9) translate(-256 -256)">
+    <g transform="translate(0 -2)">
+      <g transform="translate(211 104) scale(.9)"><path d="M0 30 30 0 50 20 70 0 100 30 50 80Z" fill="#FFFFFF"/></g>
+      <g transform="translate(151 164) scale(.9)"><path d="M0 30 30 0 50 20 70 0 100 30 50 80Z" fill="#FFFFFF"/></g>
+      <g transform="translate(271 164) scale(.9)"><path d="M0 30 30 0 50 20 70 0 100 30 50 80Z" fill="#FFFFFF"/></g>
+      <g transform="translate(91 224) scale(.9)"><path d="M0 30 30 0 50 20 70 0 100 30 50 80Z" fill="#FFFFFF"/></g>
+      <g transform="translate(331 224) scale(.9)"><path d="M0 30 30 0 50 20 70 0 100 30 50 80Z" fill="#FFFFFF"/></g>
+      <path d="M146 330V404H222V372A34 34 0 0 1 290 372V404H366V330" fill="none" stroke="#FFFFFF" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+  </g>
+</svg>
