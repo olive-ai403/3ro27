@@ -18,11 +18,11 @@
   /* 로고 기준 팔레트 — 밝은 인쇄물 톤에 맞춰 라이트 단일 테마로 고정 */
   :root {
     color-scheme: light;
-    --pink: #F2788A;
-    --yellow: #F7B500;
-    --lime: #A9C41F;
-    --blue: #6F9BD3;
-    --purple: #A565A9;
+    --pink: #F2788A;   /* 하트 다섯 색: CLAUDE.md 디자인 규칙과 같은 값 */
+    --yellow: #FBBF1A;
+    --lime: #B3CE2B;
+    --blue: #7EA7DA;
+    --purple: #A865AE;
     --ink: #3F4044;
     --gray: #6D6E71;
     --muted: #8E9095;
@@ -111,11 +111,11 @@
 
   /* 사업 — 로고의 다섯 하트 색을 사업 하나씩에 */
   /* 방과후=분홍, 방학=노랑, 급식=연두, 교육=파랑, 활동가 양성=보라 (-t: 옅은 바탕, -d: 글자용) */
-  .c-pink   { --c: #F2788A; --t: #FDEBEE; --d: #C2485F; }
-  .c-yellow { --c: #FBBF1A; --t: #FFF5D6; --d: #8F6400; }
-  .c-lime   { --c: #B3CE2B; --t: #F2F8DA; --d: #5C7210; }
-  .c-blue   { --c: #7EA7DA; --t: #E8F0FA; --d: #3A67A3; }
-  .c-purple { --c: #A865AE; --t: #F4E9F5; --d: #7E3F86; }
+  .c-pink   { --c: var(--pink); --t: #FDEBEE; --d: #C2485F; }
+  .c-yellow { --c: var(--yellow); --t: #FFF5D6; --d: #8F6400; }
+  .c-lime   { --c: var(--lime); --t: #F2F8DA; --d: #5C7210; }
+  .c-blue   { --c: var(--blue); --t: #E8F0FA; --d: #3A67A3; }
+  .c-purple { --c: var(--purple); --t: #F4E9F5; --d: #7E3F86; }
   .services { list-style: none; padding: 0; margin: 36px 0 0; display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; }
   .svc { grid-column: span 2; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; display: flex; flex-direction: column; }
   .svc:nth-child(4), .svc:nth-child(5) { grid-column: span 3; }
