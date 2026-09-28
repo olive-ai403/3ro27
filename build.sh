@@ -32,10 +32,15 @@ EOF
   awk 'f{print} /<\/style>/{f=1}' index.src.html
   echo '</body>'
   echo '</html>'
-} | sed 's#{{LOGO}}#images/logo.png#g' > netlify/index.html
+} | sed 's#{{LOGO}}#images/logo.png#g; s#{{IMG}}#images/#g' > netlify/index.html
 
-# 2) Claude 링크용: 로고를 파일 안에 넣기
+# 2) Claude 링크용: 로고와 사진({{IMG}}파일이름)을 파일 안에 넣기
 B64=$(base64 -w0 netlify/images/logo.png)
 awk -v r="data:image/png;base64,$B64" '{gsub(/\{\{LOGO\}\}/, r); print}' index.src.html > index.html
+for f in $(grep -o '{{IMG}}[A-Za-z0-9._-]*' index.src.html | sed 's#{{IMG}}##' | sort -u); do
+  case "$f" in *.png) T=image/png ;; *) T=image/jpeg ;; esac
+  awk -v k="{{IMG}}$f" -v r="data:$T;base64,$(base64 -w0 "netlify/images/$f")" '{ while ((i = index($0, k)) > 0) $0 = substr($0, 1, i-1) r substr($0, i+length(k)); print }' index.html > index.html.tmp
+  mv index.html.tmp index.html
+done
 
 echo "완료: netlify/index.html, index.html"
