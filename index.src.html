@@ -198,6 +198,8 @@
   .don-give .acct { font-family: var(--display); font-weight: 800; color: var(--ink); font-variant-numeric: tabular-nums; }
   @media (max-width: 599px) { .don-summary { grid-template-columns: 1fr; } .don-summary > div { padding-block: 16px; } }
   footer .admin-link { color: var(--muted); }
+  .don-report { margin-top: 24px; font-size: 13px; line-height: 20px; color: var(--gray); }
+  .don-report a { font-weight: 700; color: var(--ink); white-space: nowrap; }
 
   /* 함께하기 */
   .join { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 36px; }
@@ -424,6 +426,8 @@
           <tbody id="don-rows"><tr><td colspan="5" class="empty">기부금 내역을 불러오는 중입니다.</td></tr></tbody>
         </table>
       </div>
+      <p class="don-report">3로27 사회적협동조합의 공익 위반 사항은 국세청에 제보할 수 있습니다. 제보자의 신원은 법에 따라 보호됩니다.
+        <a href="https://hometax.go.kr/websquare/websquare.html?w2xPath=/ui/pp/index_pp.xml&amp;tmIdx=47&amp;tm2lIdx=4710000000&amp;tm3lIdx=4710010000" target="_blank" rel="noopener">국세청 홈택스 탈세제보 바로가기 ↗</a></p>
       <div class="don-give">
         <div>
           <h3>후원하기</h3>
@@ -472,6 +476,7 @@
     <dl>
       <dt>주소</dt><dd>(12097) 경기도 남양주시 덕송3로 27, 위스테이별내 상가 107호</dd>
       <dt>문의</dt><dd>카카오채널 ‘3로27’</dd>
+      <dt>공익위반 제보</dt><dd><a href="https://hometax.go.kr/websquare/websquare.html?w2xPath=/ui/pp/index_pp.xml&amp;tmIdx=47&amp;tm2lIdx=4710000000&amp;tm3lIdx=4710010000" target="_blank" rel="noopener">국세청 홈택스 탈세제보 ↗</a></dd>
       <dt>관리</dt><dd><a href="admin.html" class="admin-link">관리자 페이지</a></dd>
     </dl>
   </div>
