@@ -105,20 +105,58 @@
     if (event === "INITIAL_SESSION" || event === "SIGNED_IN" || event === "SIGNED_OUT") setTimeout(function () { onSession(session); }, 0);
   });
 
-  // ---------- 사진 줄이기 (긴 쪽 1600px, JPEG로 다시 저장하며 GPS 등 촬영 정보 제거) ----------
-  function shrinkPhoto(file) {
-    return new Promise(function (resolve, reject) {
-      var img = new Image(), url = URL.createObjectURL(file);
+  // ---------- 사진 자르기 창 (Cropper.js) ----------
+  // 사이트에 보이는 틀과 같은 비율·크기로 잘라서 올림. JPEG로 새로 저장하므로 GPS 등 촬영 정보도 지워짐.
+  var PHOTO_SPEC = {
+    cover:    { ratio: 2,       w: 1200, h: 600, name: "주요사업 카드 사진(2:1, 1200×600)" },
+    activity: { ratio: 16 / 10, w: 1280, h: 800, name: "활동 기록 사진(16:10, 1280×800)" }
+  };
+  // src: 고른 파일(File) 또는 이미 올라간 사진 주소. 결과: 잘린 JPEG(Blob), 취소하면 null
+  function cropPhoto(src, spec) {
+    return new Promise(function (resolve) {
+      var modal = $("crop"), img = $("crop-img"), warn = $("crop-warn"), cropper = null, objUrl = null;
+      $("crop-hint").textContent = spec.name + " 규격으로 잘립니다. 사진을 끌어 옮기고, 마우스 휠·두 손가락·확대 버튼으로 크기를 맞춰 사이트에 보일 부분을 네모 안에 넣어주세요.";
+      warn.hidden = true;
+      function onKey(e) { if (e.key === "Escape") close(null); }
+      function close(result) {
+        if (cropper) cropper.destroy();
+        if (objUrl) URL.revokeObjectURL(objUrl);
+        modal.hidden = true; img.onload = img.onerror = null; img.removeAttribute("src");
+        ["crop-in", "crop-out", "crop-reset", "crop-cancel", "crop-ok"].forEach(function (id) { $(id).onclick = null; });
+        document.removeEventListener("keydown", onKey);
+        resolve(result);
+      }
+      document.addEventListener("keydown", onKey);
       img.onload = function () {
-        var max = 1600, w = img.naturalWidth, h = img.naturalHeight, s = Math.min(1, max / Math.max(w, h));
-        var c = document.createElement("canvas"); c.width = Math.round(w * s); c.height = Math.round(h * s);
-        var g = c.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height); g.drawImage(img, 0, 0, c.width, c.height);
-        URL.revokeObjectURL(url);
-        c.toBlob(function (b) { b ? resolve(b) : reject(new Error("사진 변환 실패")); }, "image/jpeg", 0.85);
+        cropper = new Cropper(img, {
+          aspectRatio: spec.ratio, viewMode: 1, dragMode: "move", autoCropArea: 1, background: false,
+          checkCrossOrigin: false, toggleDragModeOnDblclick: false,
+          crop: function (e) { warn.hidden = e.detail.width >= spec.w * 0.6; }
+        });
       };
-      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error("사진을 열 수 없습니다")); };
-      img.src = url;
+      img.onerror = function () { toast("사진을 열 수 없습니다. 다른 사진으로 해주세요.", true); close(null); };
+      $("crop-in").onclick = function () { if (cropper) cropper.zoom(0.1); };
+      $("crop-out").onclick = function () { if (cropper) cropper.zoom(-0.1); };
+      $("crop-reset").onclick = function () { if (cropper) cropper.reset(); };
+      $("crop-cancel").onclick = function () { close(null); };
+      $("crop-ok").onclick = function () {
+        if (!cropper) return;
+        var c = cropper.getCroppedCanvas({ width: spec.w, height: spec.h, fillColor: "#fff", imageSmoothingEnabled: true, imageSmoothingQuality: "high" });
+        c.toBlob(function (b) { close(b); }, "image/jpeg", 0.85);
+      };
+      modal.hidden = false;
+      if (typeof src === "string") {
+        img.crossOrigin = "anonymous";
+        img.src = src + (src.indexOf("?") < 0 ? "?" : "&") + "crop=" + Date.now();
+      } else {
+        img.removeAttribute("crossorigin");
+        objUrl = URL.createObjectURL(src); img.src = objUrl;
+      }
     });
+  }
+  function blobUrl(img, blob) {
+    if (img.dataset.blob) URL.revokeObjectURL(img.dataset.blob);
+    img.dataset.blob = URL.createObjectURL(blob); img.src = img.dataset.blob;
   }
   function photoUrl(path) { return db.storage.from(cfg.photoBucket).getPublicUrl(path).data.publicUrl; }
   // 사진 파일 지우기 (실패하면 알려줌. 남은 파일은 다음에 관리자 페이지를 열 때 정리됨)
@@ -148,12 +186,19 @@
   // ---------- 활동 기록 ----------
   var actEditing = null;
   $("act-date").value = today();
+  var actBlob = null; // 잘라둔 새 사진
+  function setActBlob(b) {
+    actBlob = b;
+    var pv = $("act-photo-new"); pv.hidden = !b; if (b) blobUrl(pv, b);
+    $("act-consent-wrap").hidden = !b; $("act-consent").required = !!b; if (!b) $("act-consent").checked = false;
+  }
   $("act-photo").addEventListener("change", function () {
-    var has = this.files.length > 0;
-    $("act-consent-wrap").hidden = !has; $("act-consent").required = has; if (!has) $("act-consent").checked = false;
+    var input = this, f = input.files[0];
+    if (!f) { setActBlob(null); return; }
+    cropPhoto(f, PHOTO_SPEC.activity).then(function (b) { if (!b) input.value = ""; setActBlob(b); });
   });
   function resetActForm() {
-    actEditing = null; $("act-form").reset(); $("act-date").value = today();
+    actEditing = null; $("act-form").reset(); $("act-date").value = today(); setActBlob(null);
     $("act-form-title").textContent = "활동 기록 쓰기"; $("act-cancel").hidden = true;
     $("act-photo-now").hidden = true; $("act-consent-wrap").hidden = true; $("act-consent").required = false;
   }
@@ -179,7 +224,7 @@
             actEditing = r;
             $("act-service").value = r.service; $("act-date").value = r.activity_date;
             $("act-title").value = r.title; $("act-body").value = r.body || "";
-            $("act-photo").value = ""; $("act-consent-wrap").hidden = true; $("act-consent").required = false;
+            $("act-photo").value = ""; setActBlob(null);
             $("act-photo-now").hidden = !r.photo_path; $("act-photo-remove").checked = false;
             if (r.photo_path) $("act-photo-img").src = photoUrl(r.photo_path);
             $("act-form-title").textContent = "활동 기록 고치기"; $("act-cancel").hidden = false;
@@ -202,15 +247,14 @@
   $("act-form").addEventListener("submit", function (e) {
     e.preventDefault();
     var btn = $("act-save"); btn.disabled = true; btn.textContent = "저장하는 중…";
-    var file = $("act-photo").files[0];
     var oldPath = actEditing ? actEditing.photo_path : null;
     var row = {
       service: $("act-service").value, activity_date: $("act-date").value,
       title: $("act-title").value.trim(), body: $("act-body").value.trim()
     };
     var upload = Promise.resolve(undefined);
-    if (file) {
-      upload = shrinkPhoto(file).then(function (blob) {
+    if (actBlob) {
+      upload = Promise.resolve(actBlob).then(function (blob) {
         var path = row.service + "/" + Date.now() + "-" + Math.random().toString(36).slice(2, 8) + ".jpg";
         return db.storage.from(cfg.photoBucket).upload(path, blob, { contentType: "image/jpeg" }).then(function (res) {
           if (res.error) throw res.error;
@@ -273,19 +317,38 @@
 
     var fileL = el("label", null, cover || svc.defaultPhoto ? "새 사진으로 바꾸기" : "사진 올리기");
     var file = el("input"); file.type = "file"; file.accept = "image/jpeg,image/png,image/webp"; file.id = uid + "-file";
-    fileL.appendChild(file); f.appendChild(fileL);
+    fileL.appendChild(file);
+    fileL.appendChild(el("span", "hint", "고르면 자르기 창이 열립니다. 사이트 카드와 같은 2:1 비율(1200×600)로 잘려서 올라갑니다."));
+    f.appendChild(fileL);
 
     var consentL = el("label", "check"); consentL.hidden = true;
     var consent = el("input"); consent.type = "checkbox"; consent.id = uid + "-consent";
     consentL.appendChild(consent);
     consentL.appendChild(el("span", null, "아이 얼굴을 알아볼 수 없거나 보호자의 초상권 동의를 받은 사진이며, 이름표·화이트보드 등 이름이 보이지 않음을 확인했습니다."));
     f.appendChild(consentL);
+
+    // 잘라둔 사진 (새 사진이면 확인 칸 필요, 같은 사진 위치만 바꾸면 불필요)
+    var blob = null;
+    function setBlob(b, isNew) {
+      blob = b;
+      if (b) { var pv = el("img"); pv.alt = ""; blobUrl(pv, b); art.textContent = ""; art.appendChild(pv); }
+      consentL.hidden = !(b && isNew); consent.required = !!(b && isNew); if (!consent.required) consent.checked = false;
+      save.textContent = b ? "이대로 올리기" : (cover ? "저장" : "올리기");
+    }
     file.addEventListener("change", function () {
-      var has = file.files.length > 0; consentL.hidden = !has; consent.required = has; if (!has) consent.checked = false;
+      var picked = file.files[0]; if (!picked) return;
+      cropPhoto(picked, PHOTO_SPEC.cover).then(function (b) { if (!b) { file.value = ""; return; } setBlob(b, true); });
     });
 
     var row = el("div", "row");
     var save = el("button", "btn small", cover ? "저장" : "올리기"); save.type = "submit"; row.appendChild(save);
+    if (cover || svc.defaultPhoto) {
+      var recrop = el("button", "btn ghost small", "위치 다시 맞추기"); recrop.type = "button";
+      recrop.addEventListener("click", function () {
+        cropPhoto(cover ? photoUrl(cover.photo_path) : svc.defaultPhoto, PHOTO_SPEC.cover).then(function (b) { if (b) setBlob(b, false); });
+      });
+      row.appendChild(recrop);
+    }
     if (cover) {
       row.appendChild(deleteButton(function () {
         db.from("service_covers").delete().eq("service", key).then(function (res) {
@@ -299,13 +362,12 @@
 
     f.addEventListener("submit", function (e) {
       e.preventDefault();
-      var picked = file.files[0];
-      if (!picked && !cover) { toast("올릴 사진을 골라주세요.", true); return; }
+      if (!blob && !cover) { toast("올릴 사진을 골라주세요.", true); return; }
       save.disabled = true; save.textContent = "저장하는 중…";
       var altText = alt.value.trim();
       var job;
-      if (picked) {
-        job = shrinkPhoto(picked).then(function (blob) {
+      if (blob) {
+        job = Promise.resolve(blob).then(function (blob) {
           var path = "covers/" + key + "-" + Date.now() + ".jpg";
           return db.storage.from(cfg.photoBucket).upload(path, blob, { contentType: "image/jpeg" }).then(function (up) {
             if (up.error) throw up.error;
