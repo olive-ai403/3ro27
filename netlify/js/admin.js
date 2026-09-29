@@ -97,7 +97,7 @@
     db.rpc("is_admin").then(function (res) {
       if (res.error || !res.data) { show("v-denied"); return; }
       show("v-app");
-      if (!started) { started = true; loadActivities(); loadReceipts(); loadExpenses(); loadCovers(); }
+      if (!started) { started = true; loadActivities(); loadReceipts(); loadExpenses(); loadCovers(); cleanupOrphans(); }
     });
   }
   db.auth.onAuthStateChange(function (event, session) {
@@ -121,6 +121,29 @@
     });
   }
   function photoUrl(path) { return db.storage.from(cfg.photoBucket).getPublicUrl(path).data.publicUrl; }
+  // 사진 파일 지우기 (실패하면 알려줌. 남은 파일은 다음에 관리자 페이지를 열 때 정리됨)
+  function removePhoto(path) {
+    return db.storage.from(cfg.photoBucket).remove([path]).then(function (res) {
+      if (res.error || !res.data || !res.data.length) console.warn("사진 파일을 지우지 못함:", path, res.error);
+    });
+  }
+  // 어디에도 쓰이지 않는 사진 파일 정리 (다른 관리자가 올리는 중일 수 있어 10분 지난 것만)
+  function cleanupOrphans() {
+    Promise.all([db.from("activities").select("photo_path"), db.from("service_covers").select("photo_path")]).then(function (r) {
+      if (r[0].error || r[1].error) return;
+      var used = {};
+      r[0].data.concat(r[1].data).forEach(function (x) { if (x.photo_path) used[x.photo_path] = 1; });
+      ["covers"].concat(Object.keys(cfg.services)).forEach(function (folder) {
+        db.storage.from(cfg.photoBucket).list(folder, { limit: 1000 }).then(function (res) {
+          if (res.error || !res.data) return;
+          var stale = res.data.filter(function (o) {
+            return o.id && !used[folder + "/" + o.name] && Date.now() - new Date(o.created_at).getTime() > 10 * 60 * 1000;
+          }).map(function (o) { return folder + "/" + o.name; });
+          if (stale.length) db.storage.from(cfg.photoBucket).remove(stale);
+        });
+      });
+    });
+  }
 
   // ---------- 활동 기록 ----------
   var actEditing = null;
@@ -165,7 +188,7 @@
           acts.appendChild(deleteButton(function () {
             db.from("activities").delete().eq("id", r.id).then(function (res) {
               if (res.error) { fail("삭제", res.error); loadActivities(); return; }
-              if (r.photo_path) db.storage.from(cfg.photoBucket).remove([r.photo_path]);
+              if (r.photo_path) removePhoto(r.photo_path);
               if (actEditing && actEditing.id === r.id) resetActForm();
               toast("삭제했습니다."); loadActivities();
             });
@@ -202,10 +225,10 @@
       var q = actEditing ? db.from("activities").update(row).eq("id", actEditing.id) : db.from("activities").insert(row);
       return q.then(function (res) {
         if (res.error) {
-          if (newPath) db.storage.from(cfg.photoBucket).remove([newPath]);
+          if (newPath) removePhoto(newPath);
           throw res.error;
         }
-        if (newPath !== undefined && oldPath && oldPath !== newPath) db.storage.from(cfg.photoBucket).remove([oldPath]);
+        if (newPath !== undefined && oldPath && oldPath !== newPath) removePhoto(oldPath);
         toast(actEditing ? "고쳤습니다." : "저장했습니다. 사이트에 바로 보입니다.");
         resetActForm(); loadActivities();
       });
@@ -267,7 +290,7 @@
       row.appendChild(deleteButton(function () {
         db.from("service_covers").delete().eq("service", key).then(function (res) {
           if (res.error) { fail("사진 빼기", res.error); loadCovers(); return; }
-          db.storage.from(cfg.photoBucket).remove([cover.photo_path]);
+          removePhoto(cover.photo_path);
           toast("사진을 뺐습니다. 기본 모습으로 돌아갑니다."); loadCovers();
         });
       }, "사진 빼기"));
@@ -287,8 +310,8 @@
           return db.storage.from(cfg.photoBucket).upload(path, blob, { contentType: "image/jpeg" }).then(function (up) {
             if (up.error) throw up.error;
             return db.from("service_covers").upsert({ service: key, photo_path: path, alt: altText }).then(function (res) {
-              if (res.error) { db.storage.from(cfg.photoBucket).remove([path]); throw res.error; }
-              if (cover && cover.photo_path !== path) db.storage.from(cfg.photoBucket).remove([cover.photo_path]);
+              if (res.error) { removePhoto(path); throw res.error; }
+              if (cover && cover.photo_path !== path) removePhoto(cover.photo_path);
             });
           });
         });
