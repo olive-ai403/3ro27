@@ -89,8 +89,8 @@
   @media (max-width: 1023px) { .covers { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 599px) { .covers { grid-template-columns: 1fr; } }
   .cover { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; }
-  .cover .art { height: 150px; background: var(--c); display: grid; place-items: center; }
-  .cover .art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cover .art { height: 150px; background: var(--c); display: grid; place-items: center; overflow: hidden; }
+  .cover .art img { width: 100%; height: 150px; object-fit: cover; display: block; }
   .cover .art svg { width: 76px; height: 61px; }
   .cover form { padding: 16px 24px 24px; gap: 8px; }
   .cover .state { font-size: 13px; line-height: 18px; color: var(--muted); }
@@ -189,7 +189,7 @@
             <label>사진 (선택)<input type="file" id="act-photo" accept="image/jpeg,image/png,image/webp">
               <span class="hint">긴 쪽 1600px로 자동으로 줄이고, 촬영 위치(GPS) 정보는 지워서 올립니다.</span></label>
             <label class="check" id="act-consent-wrap" hidden><input type="checkbox" id="act-consent">
-              <span>아이 얼굴을 알아볼 수 없고(뒷모습·손·흐림 처리 등), 이름표·화이트보드 등 이름이 보이지 않는 사진임을 확인했습니다.</span></label>
+              <span>아이 얼굴을 알아볼 수 없거나(뒷모습·손·흐림 처리 등) <b>보호자의 초상권 동의를 받은 사진</b>이며, 이름표·화이트보드 등 이름이 보이지 않음을 확인했습니다.</span></label>
             <div class="row">
               <button class="btn" type="submit" id="act-save">저장</button>
               <button class="btn ghost" type="button" id="act-cancel" hidden>수정 취소</button>
@@ -255,7 +255,7 @@
         <div class="panel" style="margin-bottom:16px">
           <h2>사업 사진</h2>
           <p style="margin:0">사이트 '주요 사업' 카드 위에 나오는 사진입니다. 사업마다 한 장이고, 빼면 기본 사진(또는 색 블록)으로 돌아갑니다.
-            카드 사진은 사이트 첫인상에 가까운 자리라 <b>얼굴이 없는 사진(공간·음식·손·뒷모습)</b>을 권장합니다. 가로로 긴 사진이 잘 맞습니다.</p>
+            아이 얼굴이 나오는 사진은 <b>보호자의 초상권 동의를 받은 경우에만</b> 올려주세요. 가로로 긴 사진이 잘 맞습니다.</p>
         </div>
         <div class="covers" id="cov-list"></div>
       </section>

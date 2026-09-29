@@ -76,7 +76,7 @@
     res.data.forEach(function (c) {
       var art = document.querySelector('li[data-service="' + c.service + '"] .svc-art');
       if (!art) return;
-      var img = el("img"); img.alt = c.alt || ""; img.loading = "lazy";
+      var img = el("img"); img.alt = c.alt || ""; // lazy 금지: 화면에 붙이기 전이라 lazy면 영영 안 불러옴
       img.src = db.storage.from(cfg.photoBucket).getPublicUrl(c.photo_path).data.publicUrl;
       img.onload = function () { art.textContent = ""; art.appendChild(img); };
     });

@@ -278,7 +278,7 @@
     var consentL = el("label", "check"); consentL.hidden = true;
     var consent = el("input"); consent.type = "checkbox"; consent.id = uid + "-consent";
     consentL.appendChild(consent);
-    consentL.appendChild(el("span", null, "아이 얼굴을 알아볼 수 없고, 이름표·화이트보드 등 이름이 보이지 않는 사진임을 확인했습니다."));
+    consentL.appendChild(el("span", null, "아이 얼굴을 알아볼 수 없거나 보호자의 초상권 동의를 받은 사진이며, 이름표·화이트보드 등 이름이 보이지 않음을 확인했습니다."));
     f.appendChild(consentL);
     file.addEventListener("change", function () {
       var has = file.files.length > 0; consentL.hidden = !has; consent.required = has; if (!has) consent.checked = false;
