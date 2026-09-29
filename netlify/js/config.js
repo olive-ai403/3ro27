@@ -10,9 +10,10 @@ window.SITE_CONFIG = {
   donationAccount: null, // 예: { bank: "OO은행", number: "000-0000-0000-00", holder: "3로27 사회적협동조합" }
 
   // 사업 목록 (DESIGN.md의 사업-색 짝과 같음)
+  // defaultPhoto: 관리자가 '사업 사진'을 올리지 않았을 때 카드에 나오는 기본 사진 (없으면 색 블록)
   services: {
-    afterschool: { name: "방과후 상시돌봄", tag: "방과후", color: "pink" },
-    vacation:    { name: "방학 종일돌봄", tag: "방학", color: "yellow" },
+    afterschool: { name: "방과후 상시돌봄", tag: "방과후", color: "pink", defaultPhoto: "images/afterschool.jpg" },
+    vacation:    { name: "방학 종일돌봄", tag: "방학", color: "yellow", defaultPhoto: "images/vacation.jpg" },
     meal:        { name: "마을급식·간식", tag: "마을급식", color: "lime" },
     education:   { name: "아동 교육·문화 프로그램", tag: "교육·문화", color: "blue" },
     training:    { name: "돌봄활동가 양성", tag: "활동가 양성", color: "purple" }

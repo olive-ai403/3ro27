@@ -35,13 +35,14 @@
     return s ? el("span", "tag c-" + s.color, s.tag) : null;
   }
   // 삭제는 두 번 눌러야 실행 (첫 번째 누름 후 4초 안에 다시)
-  function deleteButton(onConfirm) {
-    var b = el("button", "btn danger small", "삭제"); b.type = "button";
+  function deleteButton(onConfirm, label) {
+    label = label || "삭제";
+    var b = el("button", "btn danger small", label); b.type = "button";
     var timer;
     b.addEventListener("click", function () {
       if (!b.classList.contains("armed")) {
         b.classList.add("armed"); b.textContent = "정말 삭제";
-        timer = setTimeout(function () { b.classList.remove("armed"); b.textContent = "삭제"; }, 4000);
+        timer = setTimeout(function () { b.classList.remove("armed"); b.textContent = label; }, 4000);
         return;
       }
       clearTimeout(timer); b.disabled = true; onConfirm();
@@ -96,7 +97,7 @@
     db.rpc("is_admin").then(function (res) {
       if (res.error || !res.data) { show("v-denied"); return; }
       show("v-app");
-      if (!started) { started = true; loadActivities(); loadReceipts(); loadExpenses(); }
+      if (!started) { started = true; loadActivities(); loadReceipts(); loadExpenses(); loadCovers(); }
     });
   }
   db.auth.onAuthStateChange(function (event, session) {
@@ -211,6 +212,95 @@
     }).catch(function (err) { fail("저장", err); })
       .then(function () { btn.disabled = false; btn.textContent = "저장"; });
   });
+
+  // ---------- 사업 사진 (주요사업 카드 대표 사진) ----------
+  function heartSvg() {
+    var ns = "http://www.w3.org/2000/svg", s = document.createElementNS(ns, "svg"), p = document.createElementNS(ns, "path");
+    s.setAttribute("viewBox", "0 0 100 80"); s.setAttribute("aria-hidden", "true");
+    p.setAttribute("d", "M0 30 30 0 50 20 70 0 100 30 50 80Z"); p.setAttribute("fill", "#fff"); s.appendChild(p);
+    return s;
+  }
+  function loadCovers() {
+    db.from("service_covers").select("*").then(function (res) {
+      if (res.error) { fail("사업 사진 불러오기", res.error); return; }
+      var byService = {}; res.data.forEach(function (c) { byService[c.service] = c; });
+      var wrap = $("cov-list"); wrap.textContent = "";
+      Object.keys(cfg.services).forEach(function (key) { wrap.appendChild(coverCard(key, cfg.services[key], byService[key])); });
+    });
+  }
+  function coverCard(key, svc, cover) {
+    var card = el("div", "cover c-" + svc.color);
+    var art = el("div", "art");
+    if (cover || svc.defaultPhoto) {
+      var im = el("img"); im.alt = ""; im.src = cover ? photoUrl(cover.photo_path) : svc.defaultPhoto; art.appendChild(im);
+    } else {
+      art.appendChild(heartSvg());
+    }
+    card.appendChild(art);
+
+    var f = el("form"); var uid = "cov-" + key;
+    var head = el("div", "top"); head.appendChild(el("span", "tag", svc.tag));
+    head.appendChild(el("b", null, svc.name)); f.appendChild(head);
+    f.appendChild(el("div", "state", cover ? "관리자가 올린 사진 · 기록: " + (cover.updated_by || cover.created_by || "")
+      : (svc.defaultPhoto ? "기본 사진 (흐림 처리된 사진)" : "사진 없음 · 색 블록으로 보임")));
+
+    var altL = el("label", null, "사진 설명 (화면을 읽어주는 기능용)");
+    var alt = el("input"); alt.type = "text"; alt.maxLength = 150; alt.id = uid + "-alt";
+    alt.placeholder = "예: 방학 마을급식으로 차린 점심 한 상"; alt.value = cover ? cover.alt : ""; altL.appendChild(alt); f.appendChild(altL);
+
+    var fileL = el("label", null, cover || svc.defaultPhoto ? "새 사진으로 바꾸기" : "사진 올리기");
+    var file = el("input"); file.type = "file"; file.accept = "image/jpeg,image/png,image/webp"; file.id = uid + "-file";
+    fileL.appendChild(file); f.appendChild(fileL);
+
+    var consentL = el("label", "check"); consentL.hidden = true;
+    var consent = el("input"); consent.type = "checkbox"; consent.id = uid + "-consent";
+    consentL.appendChild(consent);
+    consentL.appendChild(el("span", null, "아이 얼굴을 알아볼 수 없고, 이름표·화이트보드 등 이름이 보이지 않는 사진임을 확인했습니다."));
+    f.appendChild(consentL);
+    file.addEventListener("change", function () {
+      var has = file.files.length > 0; consentL.hidden = !has; consent.required = has; if (!has) consent.checked = false;
+    });
+
+    var row = el("div", "row");
+    var save = el("button", "btn small", cover ? "저장" : "올리기"); save.type = "submit"; row.appendChild(save);
+    if (cover) {
+      row.appendChild(deleteButton(function () {
+        db.from("service_covers").delete().eq("service", key).then(function (res) {
+          if (res.error) { fail("사진 빼기", res.error); loadCovers(); return; }
+          db.storage.from(cfg.photoBucket).remove([cover.photo_path]);
+          toast("사진을 뺐습니다. 기본 모습으로 돌아갑니다."); loadCovers();
+        });
+      }, "사진 빼기"));
+    }
+    f.appendChild(row);
+
+    f.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var picked = file.files[0];
+      if (!picked && !cover) { toast("올릴 사진을 골라주세요.", true); return; }
+      save.disabled = true; save.textContent = "저장하는 중…";
+      var altText = alt.value.trim();
+      var job;
+      if (picked) {
+        job = shrinkPhoto(picked).then(function (blob) {
+          var path = "covers/" + key + "-" + Date.now() + ".jpg";
+          return db.storage.from(cfg.photoBucket).upload(path, blob, { contentType: "image/jpeg" }).then(function (up) {
+            if (up.error) throw up.error;
+            return db.from("service_covers").upsert({ service: key, photo_path: path, alt: altText }).then(function (res) {
+              if (res.error) { db.storage.from(cfg.photoBucket).remove([path]); throw res.error; }
+              if (cover && cover.photo_path !== path) db.storage.from(cfg.photoBucket).remove([cover.photo_path]);
+            });
+          });
+        });
+      } else {
+        job = db.from("service_covers").update({ alt: altText }).eq("service", key).then(function (res) { if (res.error) throw res.error; });
+      }
+      job.then(function () { toast("저장했습니다. 사이트 카드에 바로 반영됩니다."); loadCovers(); })
+        .catch(function (err) { fail("저장", err); save.disabled = false; save.textContent = cover ? "저장" : "올리기"; });
+    });
+    card.appendChild(f);
+    return card;
+  }
 
   // ---------- 기부금 모금 / 사용 (같은 모양의 폼) ----------
   function moneyTab(opt) {

@@ -85,6 +85,16 @@
   .items .empty { color: var(--muted); font-size: 15px; }
   .tag { font-size: 12px; font-weight: 700; line-height: 16px; letter-spacing: .04em; color: var(--d, var(--gray)); background: var(--t, var(--soft)); padding: 4px 8px; border-radius: 9999px; }
 
+  .covers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 1023px) { .covers { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 599px) { .covers { grid-template-columns: 1fr; } }
+  .cover { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; }
+  .cover .art { height: 150px; background: var(--c); display: grid; place-items: center; }
+  .cover .art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cover .art svg { width: 76px; height: 61px; }
+  .cover form { padding: 16px 24px 24px; gap: 8px; }
+  .cover .state { font-size: 13px; line-height: 18px; color: var(--muted); }
+
   .toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: #fff; font-size: 15px; padding: 12px 24px; border-radius: 9999px; max-width: calc(100% - 32px); }
   .toast.err { background: var(--primary-strong); }
 </style>
@@ -131,6 +141,7 @@
         <button type="button" role="tab" aria-selected="true" data-tab="act">활동 기록</button>
         <button type="button" role="tab" aria-selected="false" data-tab="rcv">기부금 모금</button>
         <button type="button" role="tab" aria-selected="false" data-tab="exp">기부금 사용</button>
+        <button type="button" role="tab" aria-selected="false" data-tab="cov">사업 사진</button>
       </div>
 
       <!-- 활동 기록 -->
@@ -208,6 +219,16 @@
           <div class="list-head"><h2>사용 내역</h2><span class="sum" id="exp-sum"></span></div>
           <ul class="items" id="exp-list"></ul>
         </div>
+      </section>
+
+      <!-- 사업 사진 -->
+      <section data-pane="cov" hidden>
+        <div class="panel" style="margin-bottom:16px">
+          <h2>사업 사진</h2>
+          <p style="margin:0">사이트 '주요 사업' 카드 위에 나오는 사진입니다. 사업마다 한 장이고, 빼면 기본 사진(또는 색 블록)으로 돌아갑니다.
+            카드 사진은 사이트 첫인상에 가까운 자리라 <b>얼굴이 없는 사진(공간·음식·손·뒷모습)</b>을 권장합니다. 가로로 긴 사진이 잘 맞습니다.</p>
+        </div>
+        <div class="covers" id="cov-list"></div>
       </section>
     </div>
   </div>

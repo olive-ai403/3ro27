@@ -46,6 +46,18 @@
     acct.appendChild(document.createTextNode(" (예금주: " + a.holder + ")"));
   }
 
+  // ---------- 사업 대표 사진 (관리자가 올린 사진이 있으면 카드 사진을 바꿈) ----------
+  db.from("service_covers").select("service, photo_path, alt").then(function (res) {
+    if (res.error || !res.data) return;
+    res.data.forEach(function (c) {
+      var art = document.querySelector('li[data-service="' + c.service + '"] .svc-art');
+      if (!art) return;
+      var img = el("img"); img.alt = c.alt || ""; img.loading = "lazy";
+      img.src = db.storage.from(cfg.photoBucket).getPublicUrl(c.photo_path).data.publicUrl;
+      img.onload = function () { art.textContent = ""; art.appendChild(img); };
+    });
+  });
+
   // ---------- 활동 기록 ----------
   var PAGE = 6;
   var all = [], filter = "all", shown = PAGE;
