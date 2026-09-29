@@ -149,6 +149,56 @@
   .stat .label { font-size: 14px; color: var(--gray); margin-top: 6px; }
   .note { font-size: 13px; color: var(--muted); margin-top: 14px; }
 
+  /* 사업 카드의 활동 기록 버튼 */
+  .svc-body { display: flex; flex-direction: column; flex: 1; }
+  .svc-log { margin-top: auto; align-self: flex-start; padding: 8px 0 0; background: none; border: 0; font: 700 14px/20px var(--body); color: var(--d); cursor: pointer; }
+  .svc-log:hover { text-decoration: underline; }
+  .svc-log:focus-visible, .chip:focus-visible, .log-list button:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; border-radius: 8px; }
+
+  /* 활동 기록 */
+  .log { margin-top: 40px; padding-top: 40px; border-top: 1px solid var(--line); }
+  .log-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
+  .log-head h3 { font-size: 18px; font-weight: 800; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { font: 700 14px/20px var(--body); padding: 8px 16px; border-radius: 9999px; border: 1px solid var(--line); background: var(--paper); color: var(--gray); cursor: pointer; }
+  .chip.is-on { background: var(--t, #F6F5F4); border-color: var(--c, var(--ink)); color: var(--d, var(--ink)); }
+  .chip[data-filter="all"].is-on { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .log-list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .log-item { border: 1px solid var(--line); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; background: var(--paper); }
+  .log-item img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block; background: #F6F5F4; }
+  .log-item .in { padding: 16px 24px 24px; display: flex; flex-direction: column; gap: 8px; }
+  .log-item .meta { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .log-item h4 { margin: 0; font-family: var(--display); font-size: 18px; font-weight: 800; line-height: 26px; }
+  .log-item p { font-size: 15px; line-height: 26px; color: var(--gray); white-space: pre-line; }
+  .log-list .empty, .don-table .empty { grid-column: 1 / -1; color: var(--muted); font-size: 15px; padding: 24px 0; }
+  .more { margin: 24px auto 0; display: flex; cursor: pointer; font-family: var(--body); }
+  @media (max-width: 1023px) { .log-list { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 599px) { .log-list { grid-template-columns: 1fr; } }
+
+  /* 기부금 */
+  #donation { border-top: 1px solid var(--line); }
+  .don-year { display: flex; align-items: center; gap: 8px; margin-top: 40px; font-size: 15px; font-weight: 700; }
+  .don-year select { font: 500 15px var(--body); padding: 8px 16px; border: 1px solid var(--line); border-radius: 9999px; background: var(--paper); color: var(--ink); }
+  .don-summary { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 16px; border-top: 2px solid var(--ink); }
+  .don-summary > div { padding: 24px 16px 24px 0; border-bottom: 1px solid var(--line); }
+  .don-summary .num { font-family: var(--display); font-size: 40px; font-weight: 800; line-height: 44px; font-variant-numeric: tabular-nums; }
+  .don-summary .num small { font-size: 18px; margin-left: 2px; }
+  .don-summary .label { font-size: 13px; font-weight: 700; color: var(--gray); margin-bottom: 8px; }
+  .don-sub { font-size: 18px; font-weight: 800; margin: 40px 0 16px; }
+  .table-wrap { overflow-x: auto; }
+  .don-table { width: 100%; border-collapse: collapse; font-size: 15px; min-width: 560px; }
+  .don-table th { text-align: left; font-size: 13px; font-weight: 700; color: var(--gray); padding: 8px 16px 8px 0; border-bottom: 2px solid var(--ink); white-space: nowrap; }
+  .don-table td { padding: 16px 16px 16px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .don-table td:first-child { white-space: nowrap; font-variant-numeric: tabular-nums; color: var(--gray); }
+  .don-table .amt { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; padding-right: 0; }
+  .don-table .tag { font-size: 12px; }
+  .don-give { margin-top: 40px; padding: 24px; border-radius: 20px; background: var(--wash); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; }
+  .don-give h3 { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+  .don-give p { font-size: 15px; color: var(--gray); }
+  .don-give .acct { font-family: var(--display); font-weight: 800; color: var(--ink); font-variant-numeric: tabular-nums; }
+  @media (max-width: 599px) { .don-summary { grid-template-columns: 1fr; } .don-summary > div { padding-block: 16px; } }
+  footer .admin-link { color: var(--muted); }
+
   /* 함께하기 */
   .join { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 36px; }
   .join > div { padding: 24px; border-radius: 16px; border: 1px solid var(--line); }
@@ -184,6 +234,7 @@
       <a href="#story">연혁</a>
       <a href="#consulting">교육컨설팅</a>
       <a href="#numbers">숫자</a>
+      <a href="#donation">기부금</a>
       <a href="#join">함께하기</a>
     </nav>
     <a class="btn kakao small" href="#">
@@ -237,47 +288,69 @@
       <h2>주요 사업</h2>
       <!-- ✏️ 사진 넣기: 각 .svc-art 안에 <img src="images/사진이름.jpg" alt="사진 설명"> 을 추가하면 색 블록 위에 사진이 채워집니다 (얼굴 없는 사진) -->
       <ul class="services">
-        <li class="svc c-pink">
+        <li data-service="afterschool" class="svc c-pink">
           <div class="svc-art"><img src="{{IMG}}afterschool.jpg" alt="돌봄교실에서 아이들이 책상에 모여 교구로 무언가를 만드는 모습" loading="lazy"></div>
           <div class="svc-body">
             <span class="tag">방과후</span>
             <h3>방과후 상시돌봄</h3>
             <p>공공돌봄에서 탈락한 초등 1~6학년 아이들이 하교 후 머무는 마을 돌봄교실 ‘스스로 깨치는 아이들(스깨아)’을 운영합니다.</p>
+            <button type="button" class="svc-log" data-service="afterschool">활동 기록 보기 →</button>
           </div>
         </li>
-        <li class="svc c-yellow">
+        <li data-service="vacation" class="svc c-yellow">
           <div class="svc-art"><img src="{{IMG}}vacation.jpg" alt="돌봄교실 바닥에 아이들이 둥글게 모여 함께 활동하는 모습" loading="lazy"></div>
           <div class="svc-body">
             <span class="tag">방학</span>
             <h3>방학 종일돌봄</h3>
             <p>돌봄 공백이 가장 커지는 방학, 맞벌이 가정 아이들을 위한 종일 돌봄교실을 엽니다.</p>
+            <button type="button" class="svc-log" data-service="vacation">활동 기록 보기 →</button>
           </div>
         </li>
-        <li class="svc c-lime">
+        <li data-service="meal" class="svc c-lime">
           <div class="svc-art"><svg class="bg" aria-hidden="true"><use href="#heart" fill="#fff"/></svg><svg aria-hidden="true"><use href="#heart" fill="#fff"/></svg></div>
           <div class="svc-body">
             <span class="tag">마을급식</span>
             <h3>마을급식·간식</h3>
             <p>마을 양육자가 직접 식단을 짜고 조리한 방학 점심과 수제 간식으로 아이들의 ‘먹거리 안전망’을 지킵니다.</p>
+            <button type="button" class="svc-log" data-service="meal">활동 기록 보기 →</button>
           </div>
         </li>
-        <li class="svc c-blue">
+        <li data-service="education" class="svc c-blue">
           <div class="svc-art"><svg class="bg" aria-hidden="true"><use href="#heart" fill="#fff"/></svg><svg aria-hidden="true"><use href="#heart" fill="#fff"/></svg></div>
           <div class="svc-body">
             <span class="tag">교육·문화</span>
             <h3>아동 교육·문화 프로그램</h3>
             <p>목공 새집 만들기, 마을 축제 기획 같은 프로젝트 학습과 마을 영어교실·동아리로, 아이들이 마을의 ‘문제 해결자’로 자랍니다.</p>
+            <button type="button" class="svc-log" data-service="education">활동 기록 보기 →</button>
           </div>
         </li>
-        <li class="svc c-purple">
+        <li data-service="training" class="svc c-purple">
           <div class="svc-art"><svg class="bg" aria-hidden="true"><use href="#heart" fill="#fff"/></svg><svg aria-hidden="true"><use href="#heart" fill="#fff"/></svg></div>
           <div class="svc-body">
             <span class="tag">활동가 양성</span>
             <h3>돌봄활동가 양성</h3>
             <p>‘돌봄 강독 세미나’와 워크숍으로 양육자와 주민을 돌봄활동가로 키웁니다. 이용하던 부모가 운영위원, 마을 강사, 돌봄 기획자로 성장하는 경로를 만듭니다.</p>
+            <button type="button" class="svc-log" data-service="training">활동 기록 보기 →</button>
           </div>
         </li>
       </ul>
+
+      <!-- 활동 기록: 관리자 페이지(admin.html)에서 쓴 기록이 여기 나옵니다 -->
+      <div class="log" id="activity-log">
+        <div class="log-head">
+          <h3>활동 기록</h3>
+          <div class="chips" role="group" aria-label="사업별로 보기">
+            <button type="button" class="chip is-on" data-filter="all">전체</button>
+            <button type="button" class="chip c-pink" data-filter="afterschool">방과후</button>
+            <button type="button" class="chip c-yellow" data-filter="vacation">방학</button>
+            <button type="button" class="chip c-lime" data-filter="meal">마을급식</button>
+            <button type="button" class="chip c-blue" data-filter="education">교육·문화</button>
+            <button type="button" class="chip c-purple" data-filter="training">활동가 양성</button>
+          </div>
+        </div>
+        <ul class="log-list" id="log-list"><li class="empty">활동 기록을 불러오는 중입니다.</li></ul>
+        <button type="button" class="btn ghost more" id="log-more" hidden>더 보기</button>
+      </div>
     </div>
   </section>
 
@@ -330,6 +403,40 @@
     </div>
   </section>
 
+  <section class="block" id="donation">
+    <div class="wrap">
+      <p class="eyebrow">DONATIONS</p>
+      <h2>기부금 모금과 사용</h2>
+      <p class="lead">보내주신 기부금이 어디에 쓰였는지 연도별로 투명하게 공개합니다. 기부자 개인정보는 공개하지 않습니다.</p>
+      <div class="don-year">
+        <label for="don-year-select">연도</label>
+        <select id="don-year-select"></select>
+      </div>
+      <div class="don-summary">
+        <div><div class="label">모금액</div><div class="num" id="don-in">—</div></div>
+        <div><div class="label">사용액</div><div class="num" id="don-out">—</div></div>
+        <div><div class="label">잔액</div><div class="num" id="don-left">—</div></div>
+      </div>
+      <h3 class="don-sub">사용 내역</h3>
+      <div class="table-wrap">
+        <table class="don-table">
+          <thead><tr><th scope="col">날짜</th><th scope="col">사용처</th><th scope="col">내용</th><th scope="col">관련 사업</th><th scope="col" class="amt">금액</th></tr></thead>
+          <tbody id="don-rows"><tr><td colspan="5" class="empty">기부금 내역을 불러오는 중입니다.</td></tr></tbody>
+        </table>
+      </div>
+      <div class="don-give">
+        <div>
+          <h3>후원하기</h3>
+          <p id="don-account">후원 계좌는 카카오채널로 문의해 주세요.</p>
+        </div>
+        <a class="btn kakao" href="#">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 3C6.5 3 2 6.6 2 11c0 2.8 1.9 5.3 4.7 6.7l-1 3.6c-.1.3.3.6.6.4l4.2-2.8c.5.1 1 .1 1.5.1 5.5 0 10-3.6 10-8S17.5 3 12 3z"/></svg>
+          후원 문의
+        </a>
+      </div>
+    </div>
+  </section>
+
   <section class="block" id="join">
     <div class="wrap">
       <p class="eyebrow">WORK WITH US</p>
@@ -365,6 +472,7 @@
     <dl>
       <dt>주소</dt><dd>(12097) 경기도 남양주시 덕송3로 27, 위스테이별내 상가 107호</dd>
       <dt>문의</dt><dd>카카오채널 ‘3로27’</dd>
+      <dt>관리</dt><dd><a href="admin.html" class="admin-link">관리자 페이지</a></dd>
     </dl>
   </div>
 </footer>
@@ -378,3 +486,7 @@
     }
   });
 </script>
+<!-- 활동 기록·기부금 내역 불러오기 (Supabase) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
+<script src="js/config.js"></script>
+<script src="js/site.js"></script>
