@@ -151,6 +151,7 @@
 
   /* 사업 카드의 활동 기록 버튼 */
   .svc-body { display: flex; flex-direction: column; flex: 1; }
+  .svc-body .tag { align-self: flex-start; }
   .svc-log { margin-top: auto; align-self: flex-start; padding: 8px 0 0; background: none; border: 0; font: 700 14px/20px var(--body); color: var(--d); cursor: pointer; }
   .svc-log:hover { text-decoration: underline; }
   .svc-log:focus-visible, .chip:focus-visible, .log-list button:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; border-radius: 8px; }
@@ -198,8 +199,6 @@
   .don-give .acct { font-family: var(--display); font-weight: 800; color: var(--ink); font-variant-numeric: tabular-nums; }
   @media (max-width: 599px) { .don-summary { grid-template-columns: 1fr; } .don-summary > div { padding-block: 16px; } }
   footer .admin-link { color: var(--muted); }
-  .don-report { margin-top: 24px; font-size: 13px; line-height: 20px; color: var(--gray); }
-  .don-report a { font-weight: 700; color: var(--ink); white-space: nowrap; }
 
   /* 함께하기 */
   .join { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 36px; }
@@ -207,9 +206,22 @@
   .join h3 { font-size: 17px; font-weight: 800; margin-bottom: 6px; }
   .join p { font-size: 15px; color: var(--gray); }
   @media (max-width: 760px) { .join { grid-template-columns: 1fr; } }
-  .cta { margin-top: 32px; padding: 32px; border-radius: 20px; background: var(--wash); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; }
-  .cta p { font-family: var(--display); font-weight: 800; font-size: 20px; }
-  .cta p small { display: block; font-family: var(--body); font-weight: 400; font-size: 14px; color: var(--gray); margin-top: 2px; }
+  /* 공익위반 제보 */
+  .report { margin-top: 40px; padding-top: 40px; border-top: 1px solid var(--line); }
+  .report h3 { font-size: 18px; font-weight: 800; margin-bottom: 8px; }
+  .report p { font-size: 15px; line-height: 26px; color: var(--gray); margin-bottom: 16px; }
+  .report-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; max-width: 720px; }
+  .report-link { display: flex; align-items: center; gap: 16px; padding: 16px 24px; border: 1px solid var(--line); border-radius: 16px; background: var(--paper); text-decoration: none; color: var(--ink); transition: transform .15s ease, box-shadow .15s ease; }
+  .report-link:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(63, 64, 68, 0.10); }
+  .report-link:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+  .report-link .ico { width: 48px; height: 48px; border-radius: 9999px; background: #F6F5F4; color: var(--ink); display: grid; place-items: center; flex-shrink: 0; }
+  .report-link .ico svg { width: 24px; height: 24px; }
+  .report-link .txt { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+  .report-link b { font-family: var(--display); font-size: 18px; font-weight: 800; line-height: 26px; }
+  .report-link small { font-size: 13px; line-height: 18px; color: var(--gray); }
+  .report-link .go { font-size: 18px; color: var(--muted); }
+  @media (max-width: 599px) { .report-links { grid-template-columns: 1fr; } }
+  @media (prefers-reduced-motion: reduce) { .report-link { transition: none; } .report-link:hover { transform: none; } }
 
   footer { background: #F6F5F4; padding-block: 40px 48px; font-size: 14px; color: var(--gray); }
   footer .wrap { display: flex; flex-wrap: wrap; gap: 24px 48px; align-items: flex-start; justify-content: space-between; }
@@ -426,8 +438,6 @@
           <tbody id="don-rows"><tr><td colspan="5" class="empty">기부금 내역을 불러오는 중입니다.</td></tr></tbody>
         </table>
       </div>
-      <p class="don-report">3로27 사회적협동조합의 공익 위반 사항은 국세청에 제보할 수 있습니다. 제보자의 신원은 법에 따라 보호됩니다.
-        <a href="https://hometax.go.kr/websquare/websquare.html?w2xPath=/ui/pp/index_pp.xml&amp;tmIdx=47&amp;tm2lIdx=4710000000&amp;tm3lIdx=4710010000" target="_blank" rel="noopener">국세청 홈택스 탈세제보 바로가기 ↗</a></p>
       <div class="don-give">
         <div>
           <h3>후원하기</h3>
@@ -459,12 +469,22 @@
           <p>아이들의 방과후, 방학, 한 끼 식사가 마을 안에서 이어지도록 힘을 보태 주세요.</p>
         </div>
       </div>
-      <div class="cta">
-        <p>문의는 카카오채널로 받고 있습니다<small>협력·후원·컨설팅 무엇이든 편하게 남겨주세요.</small></p>
-        <a class="btn kakao" href="#">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 3C6.5 3 2 6.6 2 11c0 2.8 1.9 5.3 4.7 6.7l-1 3.6c-.1.3.3.6.6.4l4.2-2.8c.5.1 1 .1 1.5.1 5.5 0 10-3.6 10-8S17.5 3 12 3z"/></svg>
-          카카오채널 열기
-        </a>
+      <!-- 공익위반 제보 (공익법인 요건: 국세청·국민권익위원회·주무관청 중 1곳 이상 연결) -->
+      <div class="report" id="report">
+        <h3>공익위반 제보</h3>
+        <p>3로27 사회적협동조합의 공익 위반 사항은 아래 기관에 제보할 수 있습니다. 제보자의 신원은 법에 따라 보호됩니다.</p>
+        <div class="report-links">
+          <a class="report-link" href="https://hometax.go.kr/websquare/websquare.html?w2xPath=/ui/pp/index_pp.xml&amp;tmIdx=47&amp;tm2lIdx=4710000000&amp;tm3lIdx=4710010000" target="_blank" rel="noopener">
+            <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 10 12 4l9 6M5 10v9m4-9v9m6-9v9m4-9v9M3 20h18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span class="txt"><b>국세청</b><small>홈택스 탈세제보</small></span>
+            <span class="go" aria-hidden="true">↗</span>
+          </a>
+          <a class="report-link" href="https://www.clean.go.kr/menu.es?mid=a10207000000" target="_blank" rel="noopener">
+            <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 4 6v5c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10V6l-8-3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m8.5 12 2.5 2.5 4.5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span class="txt"><b>국민권익위원회</b><small>청렴포털 공익신고</small></span>
+            <span class="go" aria-hidden="true">↗</span>
+          </a>
+        </div>
       </div>
     </div>
   </section>
@@ -476,7 +496,7 @@
     <dl>
       <dt>주소</dt><dd>(12097) 경기도 남양주시 덕송3로 27, 위스테이별내 상가 107호</dd>
       <dt>문의</dt><dd>카카오채널 ‘3로27’</dd>
-      <dt>공익위반 제보</dt><dd><a href="https://hometax.go.kr/websquare/websquare.html?w2xPath=/ui/pp/index_pp.xml&amp;tmIdx=47&amp;tm2lIdx=4710000000&amp;tm3lIdx=4710010000" target="_blank" rel="noopener">국세청 홈택스 탈세제보 ↗</a></dd>
+      <dt>공익위반 제보</dt><dd><a href="https://hometax.go.kr/websquare/websquare.html?w2xPath=/ui/pp/index_pp.xml&amp;tmIdx=47&amp;tm2lIdx=4710000000&amp;tm3lIdx=4710010000" target="_blank" rel="noopener">국세청 홈택스 탈세제보 ↗</a> · <a href="https://www.clean.go.kr/menu.es?mid=a10207000000" target="_blank" rel="noopener">국민권익위원회 공익신고 ↗</a></dd>
       <dt>관리</dt><dd><a href="admin.html" class="admin-link">관리자 페이지</a></dd>
     </dl>
   </div>
