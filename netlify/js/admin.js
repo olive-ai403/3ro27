@@ -97,7 +97,7 @@
     db.rpc("is_admin").then(function (res) {
       if (res.error || !res.data) { show("v-denied"); return; }
       show("v-app");
-      if (!started) { started = true; loadActivities(); loadReceipts(); loadExpenses(); loadCovers(); cleanupOrphans(); }
+      if (!started) { started = true; loadActivities(); loadReceipts(); loadExpenses(); loadCovers(); cleanupOrphans(); loadNotices(); loadFree(); }
     });
   }
   db.auth.onAuthStateChange(function (event, session) {
@@ -323,6 +323,76 @@
     });
     card.appendChild(f);
     return card;
+  }
+
+  // ---------- 공지사항 ----------
+  var ntcEditing = null;
+  function resetNotice() {
+    ntcEditing = null; $("ntc-form").reset(); $("ntc-form-title").textContent = "공지 쓰기"; $("ntc-cancel").hidden = true;
+  }
+  $("ntc-cancel").addEventListener("click", resetNotice);
+  function loadNotices() {
+    db.from("notices").select("*").order("pinned", { ascending: false }).order("created_at", { ascending: false }).then(function (res) {
+      var list = $("ntc-list"); list.textContent = "";
+      if (res.error) { fail("공지 불러오기", res.error); return; }
+      if (!res.data.length) { list.appendChild(el("li", "empty", "아직 공지가 없습니다.")); return; }
+      res.data.forEach(function (r) {
+        var li = el("li"), m = el("div", "main"), top = el("div", "top");
+        if (r.pinned) top.appendChild(el("span", "tag c-pink", "고정"));
+        top.appendChild(el("span", null, dot(String(r.created_at).slice(0, 10))));
+        m.appendChild(top); m.appendChild(el("div", "title", r.title)); m.appendChild(el("div", "by", byLine(r)));
+        li.appendChild(m);
+        var acts = el("div", "acts");
+        acts.appendChild(editButton(function () {
+          ntcEditing = r; $("ntc-title").value = r.title; $("ntc-body").value = r.body || ""; $("ntc-pinned").checked = r.pinned;
+          $("ntc-form-title").textContent = "공지 고치기"; $("ntc-cancel").hidden = false; window.scrollTo({ top: 0, behavior: "smooth" });
+        }));
+        acts.appendChild(deleteButton(function () {
+          db.from("notices").delete().eq("id", r.id).then(function (res) {
+            if (res.error) { fail("삭제", res.error); loadNotices(); return; }
+            if (ntcEditing && ntcEditing.id === r.id) resetNotice();
+            toast("삭제했습니다."); loadNotices();
+          });
+        }));
+        li.appendChild(acts); list.appendChild(li);
+      });
+    });
+  }
+  $("ntc-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var btn = e.target.querySelector("button[type=submit]"); btn.disabled = true;
+    var row = { title: $("ntc-title").value.trim(), body: $("ntc-body").value.trim(), pinned: $("ntc-pinned").checked };
+    var q = ntcEditing ? db.from("notices").update(row).eq("id", ntcEditing.id) : db.from("notices").insert(row);
+    q.then(function (res) {
+      btn.disabled = false;
+      if (res.error) { fail("저장", res.error); return; }
+      toast(ntcEditing ? "고쳤습니다." : "공지를 올렸습니다."); resetNotice(); loadNotices();
+    });
+  });
+
+  // ---------- 자유게시판 관리 (삭제만) ----------
+  function loadFree() {
+    db.from("free_posts").select("id, nickname, title, body, created_at").order("created_at", { ascending: false }).limit(300).then(function (res) {
+      var list = $("fre-list"); list.textContent = "";
+      if (res.error) { fail("자유게시판 불러오기", res.error); return; }
+      if (!res.data.length) { list.appendChild(el("li", "empty", "아직 글이 없습니다.")); return; }
+      res.data.forEach(function (r) {
+        var li = el("li"), m = el("div", "main"), top = el("div", "top");
+        top.appendChild(el("span", null, dot(String(r.created_at).slice(0, 10)) + " · " + r.nickname));
+        m.appendChild(top);
+        var a = el("a", "title", r.title); a.href = "board.html#free/" + r.id; a.target = "_blank"; a.rel = "noopener"; m.appendChild(a);
+        m.appendChild(el("div", "by", r.body.length > 80 ? r.body.slice(0, 80) + "…" : r.body));
+        li.appendChild(m);
+        var acts = el("div", "acts");
+        acts.appendChild(deleteButton(function () {
+          db.from("free_posts").delete({ count: "exact" }).eq("id", r.id).then(function (res) {
+            if (res.error || !res.count) { fail("삭제", res.error); loadFree(); return; }
+            toast("삭제했습니다."); loadFree();
+          });
+        }));
+        li.appendChild(acts); list.appendChild(li);
+      });
+    });
   }
 
   // ---------- 기부금 모금 / 사용 (같은 모양의 폼) ----------

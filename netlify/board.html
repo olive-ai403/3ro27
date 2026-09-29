@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>공지사항 · 자유게시판 · 3로27 사회적협동조합</title>
+<meta name="description" content="3로27 사회적협동조합의 공지사항과 자유게시판입니다.">
+<link rel="icon" type="image/png" sizes="64x64" href="images/favicon.png">
+<link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+  /* 값은 DESIGN.md를 따름 */
+  :root {
+    color-scheme: light;
+    --ink: #3F4044; --gray: #6D6E71; --muted: #8E9095; --line: #E4E2E0;
+    --paper: #FFFFFF; --soft: #F6F5F4; --wash: #FBF4EC;
+    --primary-strong: #C2485F; --blue: #7EA7DA;
+    --display: "Gothic A1", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    --body: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  img { max-width: 100%; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 400 16px/28px var(--body); word-break: keep-all; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding-inline: 24px; }
+  @media (max-width: 599px) { .wrap { padding-inline: 16px; } }
+  h1, h2, h3 { font-family: var(--display); margin: 0; text-wrap: balance; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; border-radius: 8px; }
+  [hidden] { display: none !important; }
+
+  /* 상단 (메인과 같은 메뉴) */
+  .site-header { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+  .top { padding-block: 12px; display: flex; align-items: center; gap: 16px; }
+  .top img { height: 38px; width: auto; display: block; }
+  .menu { display: flex; gap: 2px; margin-left: auto; overflow-x: auto; scrollbar-width: none; }
+  .menu::-webkit-scrollbar { display: none; }
+  .menu a { text-decoration: none; font-size: 15px; font-weight: 500; color: var(--gray); padding: 8px 12px; border-radius: 9999px; white-space: nowrap; }
+  .menu a:hover { color: var(--ink); background: var(--soft); }
+  .menu a[aria-current="page"] { color: var(--ink); font-weight: 700; background: var(--soft); }
+  @media (max-width: 1023px) {
+    .top { flex-wrap: wrap; gap: 8px 16px; }
+    .menu { order: 3; margin-inline: -12px; width: calc(100% + 24px); }
+    .menu a { padding: 8px 12px; font-size: 14px; }
+  }
+
+  main .wrap { padding-block: 40px 72px; }
+  .eyebrow { font-size: 13px; font-weight: 700; letter-spacing: .08em; color: var(--muted); margin: 0 0 8px; }
+  .page-title { font-size: 30px; font-weight: 800; line-height: 42px; margin-bottom: 24px; }
+  @media (max-width: 599px) { .page-title { font-size: 24px; line-height: 34px; } }
+
+  .tabs { display: flex; gap: 8px; margin-bottom: 24px; }
+  .tabs a { font: 700 15px/20px var(--body); padding: 12px 24px; border-radius: 9999px; border: 1px solid var(--line); color: var(--gray); text-decoration: none; }
+  .tabs a[aria-current="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
+
+  .bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+  .bar .count { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font: 700 15px/20px var(--body); padding: 12px 24px; border-radius: 9999px; border: 1px solid var(--ink); background: var(--ink); color: #fff; cursor: pointer; text-decoration: none; }
+  .btn.ghost { background: var(--paper); color: var(--ink); border-color: var(--line); }
+  .btn.small { padding: 8px 16px; font-size: 14px; }
+  .btn.danger { background: var(--paper); color: var(--primary-strong); border-color: var(--line); }
+  .btn.danger.armed { background: var(--primary-strong); border-color: var(--primary-strong); color: #fff; }
+  .btn:disabled { opacity: .5; cursor: default; }
+
+  /* 목록 */
+  .list { list-style: none; padding: 0; margin: 0; border-top: 2px solid var(--ink); }
+  .list li { border-bottom: 1px solid var(--line); }
+  .list a { display: flex; align-items: baseline; gap: 16px; padding: 16px 0; text-decoration: none; }
+  .list a:hover .t { text-decoration: underline; }
+  .list .t { flex: 1; min-width: 0; font-size: 16px; font-weight: 500; overflow-wrap: anywhere; }
+  .list .m { font-size: 13px; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .list .empty { padding: 40px 0; text-align: center; color: var(--muted); font-size: 15px; }
+  .pin { display: inline-block; margin-right: 8px; font-size: 12px; font-weight: 700; line-height: 16px; letter-spacing: .04em; color: #C2485F; background: #FDEBEE; padding: 4px 8px; border-radius: 9999px; vertical-align: 2px; }
+  @media (max-width: 599px) { .list a { flex-direction: column; gap: 4px; } }
+  .pager { display: flex; justify-content: center; align-items: center; gap: 16px; margin-top: 24px; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+  /* 글 보기 */
+  .post-head { border-top: 2px solid var(--ink); border-bottom: 1px solid var(--line); padding: 24px 0 16px; }
+  .post-head h2 { font-size: 24px; font-weight: 800; line-height: 34px; overflow-wrap: anywhere; }
+  .post-head .m { margin-top: 8px; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .post-body { padding: 24px 0 40px; border-bottom: 1px solid var(--line); white-space: pre-line; overflow-wrap: anywhere; font-size: 16px; line-height: 28px; }
+  .post-actions { display: flex; justify-content: space-between; gap: 16px; margin-top: 24px; flex-wrap: wrap; align-items: flex-start; }
+  .del-box { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .del-box input { width: 180px; }
+  .msg { font-size: 13px; line-height: 18px; color: var(--primary-strong); font-weight: 700; margin-top: 8px; }
+
+  /* 글쓰기 */
+  form { display: flex; flex-direction: column; gap: 16px; max-width: 720px; }
+  label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 700; color: var(--gray); }
+  input, textarea { font: 400 15px/24px var(--body); color: var(--ink); padding: 8px 16px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); width: 100%; }
+  textarea { min-height: 240px; resize: vertical; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 599px) { .two { grid-template-columns: 1fr; } }
+  .hint { font-size: 13px; font-weight: 400; line-height: 18px; color: var(--muted); }
+  .notice-box { background: var(--wash); border-radius: 16px; padding: 16px 24px; font-size: 14px; line-height: 22px; color: var(--gray); }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+  footer { background: var(--soft); font-size: 14px; color: var(--gray); }
+  footer .wrap { padding-block: 40px 48px; }
+
+  .toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: #fff; font-size: 15px; padding: 12px 24px; border-radius: 9999px; max-width: calc(100% - 32px); z-index: 20; }
+  .toast.err { background: var(--primary-strong); }
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap top">
+    <a href="./"><img src="images/logo.png" alt="3로27 사회적협동조합 홈으로"></a>
+    <nav class="menu" aria-label="주요 메뉴">
+      <a href="./#about">소개</a>
+      <a href="./#services">주요사업</a>
+      <a href="./#story">연혁</a>
+      <a href="./#consulting">교육컨설팅</a>
+      <a href="./#numbers">숫자</a>
+      <a href="./#donation">기부금</a>
+      <a href="./#join">함께하기</a>
+      <a href="board.html#notice" data-board="notice">공지사항</a>
+      <a href="board.html#free" data-board="free">자유게시판</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <p class="eyebrow">BOARD</p>
+    <h1 class="page-title" id="page-title">공지사항</h1>
+    <nav class="tabs" aria-label="게시판">
+      <a href="#notice" data-board="notice">공지사항</a>
+      <a href="#free" data-board="free">자유게시판</a>
+    </nav>
+
+    <!-- 목록 -->
+    <section id="v-list" hidden>
+      <div class="bar">
+        <span class="count" id="list-count"></span>
+        <a class="btn small" id="write-btn" href="#free/write" hidden>글쓰기</a>
+        <a class="btn ghost small" id="notice-admin" href="admin.html" hidden>관리자 페이지에서 공지 쓰기</a>
+      </div>
+      <ul class="list" id="list"><li class="empty">불러오는 중입니다.</li></ul>
+      <div class="pager" id="pager" hidden>
+        <button type="button" class="btn ghost small" id="prev">이전</button>
+        <span id="page-no"></span>
+        <button type="button" class="btn ghost small" id="next">다음</button>
+      </div>
+    </section>
+
+    <!-- 글 보기 -->
+    <section id="v-post" hidden>
+      <div class="post-head"><h2 id="post-title"></h2><div class="m" id="post-meta"></div></div>
+      <div class="post-body" id="post-body"></div>
+      <div class="post-actions">
+        <a class="btn ghost small" id="back" href="#notice">목록</a>
+        <div id="post-del" hidden>
+          <div class="del-box" id="del-author">
+            <button type="button" class="btn danger small" id="del-open">삭제</button>
+            <span id="del-form" hidden class="del-box">
+              <input type="password" id="del-pw" placeholder="글 비밀번호" autocomplete="off" aria-label="글 비밀번호">
+              <button type="button" class="btn danger small armed" id="del-go">삭제하기</button>
+            </span>
+          </div>
+          <div class="msg" id="del-msg" hidden></div>
+          <div class="del-box" id="del-admin" hidden style="margin-top:8px"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 자유게시판 글쓰기 -->
+    <section id="v-write" hidden>
+      <form id="write-form" autocomplete="off">
+        <div class="notice-box">누구나 글을 쓸 수 있습니다. <b>아이 이름, 전화번호, 주소 같은 개인정보는 쓰지 마세요.</b>
+          광고·욕설·다른 사람을 해치는 글은 관리자가 지울 수 있습니다. 문의는 <a href="https://pf.kakao.com/_vdkLK" target="_blank" rel="noopener">카카오채널</a>이 더 빠릅니다.</div>
+        <div class="two">
+          <label>닉네임<input type="text" id="w-nick" maxlength="20" required></label>
+          <label>비밀번호 (글 삭제용, 4자 이상)<input type="password" id="w-pw" minlength="4" maxlength="72" required autocomplete="new-password"></label>
+        </div>
+        <label>제목<input type="text" id="w-title" maxlength="100" required></label>
+        <label>내용<textarea id="w-body" maxlength="3000" required></textarea>
+          <span class="hint">3,000자까지 쓸 수 있습니다.</span></label>
+        <label class="hp" aria-hidden="true">홈페이지<input type="text" id="w-website" tabindex="-1" autocomplete="off"></label>
+        <div style="display:flex;gap:8px">
+          <button class="btn" type="submit" id="w-save">등록</button>
+          <a class="btn ghost" href="#free">취소</a>
+        </div>
+      </form>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">3로27 사회적협동조합 · (12097) 경기도 남양주시 덕송3로 27, 위스테이별내 상가 107호 · 문의 카카오채널 ‘3로27’</div>
+</footer>
+
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
+<script src="js/config.js"></script>
+<script src="js/board.js"></script>
+</body>
+</html>

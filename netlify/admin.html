@@ -142,6 +142,8 @@
         <button type="button" role="tab" aria-selected="false" data-tab="rcv">기부금 모금</button>
         <button type="button" role="tab" aria-selected="false" data-tab="exp">기부금 사용</button>
         <button type="button" role="tab" aria-selected="false" data-tab="cov">사업 사진</button>
+        <button type="button" role="tab" aria-selected="false" data-tab="ntc">공지사항</button>
+        <button type="button" role="tab" aria-selected="false" data-tab="fre">자유게시판</button>
       </div>
 
       <!-- 활동 기록 -->
@@ -229,6 +231,35 @@
             카드 사진은 사이트 첫인상에 가까운 자리라 <b>얼굴이 없는 사진(공간·음식·손·뒷모습)</b>을 권장합니다. 가로로 긴 사진이 잘 맞습니다.</p>
         </div>
         <div class="covers" id="cov-list"></div>
+      </section>
+
+      <!-- 공지사항 -->
+      <section data-pane="ntc" class="grid" hidden>
+        <div class="panel">
+          <h2 id="ntc-form-title">공지 쓰기</h2>
+          <form id="ntc-form">
+            <label>제목<input type="text" id="ntc-title" maxlength="150" required></label>
+            <label>내용<textarea id="ntc-body" maxlength="5000" style="min-height:240px"></textarea></label>
+            <label class="check" style="background:var(--soft)"><input type="checkbox" id="ntc-pinned"> 목록 맨 위에 고정</label>
+            <div class="row">
+              <button class="btn" type="submit">저장</button>
+              <button class="btn ghost" type="button" id="ntc-cancel" hidden>수정 취소</button>
+            </div>
+          </form>
+        </div>
+        <div class="panel">
+          <div class="list-head"><h2>등록된 공지</h2><a class="sum" href="board.html#notice" target="_blank" rel="noopener">사이트에서 보기 ↗</a></div>
+          <ul class="items" id="ntc-list"></ul>
+        </div>
+      </section>
+
+      <!-- 자유게시판 관리 -->
+      <section data-pane="fre" hidden>
+        <div class="panel">
+          <div class="list-head"><h2>자유게시판 글</h2><a class="sum" href="board.html#free" target="_blank" rel="noopener">사이트에서 보기 ↗</a></div>
+          <p>광고·욕설·개인정보가 담긴 글은 지워주세요. 지운 글은 되살릴 수 없습니다. 작성자 비밀번호는 관리자도 볼 수 없습니다.</p>
+          <ul class="items" id="fre-list"></ul>
+        </div>
       </section>
     </div>
   </div>
