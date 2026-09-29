@@ -38,12 +38,36 @@
   var db = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseKey, { auth: { persistSession: false } });
 
   // ---------- 후원 계좌 ----------
-  var acct = document.getElementById("don-account");
-  if (acct && cfg.donationAccount) {
-    var a = cfg.donationAccount;
+  function showAccount(a) {
+    var acct = document.getElementById("don-account");
+    if (!acct || !a || !a.bank || !a.number) return;
     acct.textContent = "";
     acct.appendChild(el("span", "acct", a.bank + " " + a.number));
-    acct.appendChild(document.createTextNode(" (예금주: " + a.holder + ")"));
+    if (a.holder) acct.appendChild(document.createTextNode(" (예금주: " + a.holder + ")"));
+  }
+  showAccount(cfg.donationAccount);
+
+  // ---------- 관리자가 고친 사이트 문구 적용 ----------
+  if (window.SiteContent) {
+    db.from("site_content").select("key, value").then(function (res) {
+      if (res.error || !res.data || !res.data.length) return;
+      var data = window.SiteContent.rowsToData(res.data);
+      window.SiteContent.applyAll(document, data);
+      var slogan = document.querySelector(".slogan");
+      if (slogan) slogan.setAttribute("aria-label", Array.prototype.map.call(slogan.children, function (s) { return s.textContent; }).join(", "));
+      if (data.donation && data.donation.account) showAccount(data.donation.account);
+      // 사업 이름표가 바뀌었으면 활동 기록 태그·버튼에도 반영
+      if (data.services) {
+        Object.keys(cfg.services).forEach(function (k) {
+          var s = data.services[k]; if (!s) return;
+          if (s.tag) cfg.services[k].tag = s.tag;
+          if (s.name) cfg.services[k].name = s.name;
+          var chip = document.querySelector('.chip[data-filter="' + k + '"]'); if (chip && s.tag) chip.textContent = s.tag;
+        });
+        if (typeof renderLog === "function" && all.length) renderLog();
+        if (typeof renderDonation === "function" && expenses.length) renderDonation();
+      }
+    });
   }
 
   // ---------- 사업 대표 사진 (관리자가 올린 사진이 있으면 카드 사진을 바꿈) ----------

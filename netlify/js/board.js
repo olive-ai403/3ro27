@@ -157,6 +157,13 @@
   }
   window.addEventListener("hashchange", route);
 
+  // 관리자가 고친 하단 주소 적용
+  if (window.SiteContent) {
+    db.from("site_content").select("key, value").eq("key", "footer").then(function (res) {
+      if (!res.error && res.data && res.data.length) window.SiteContent.applyAll(document, window.SiteContent.rowsToData(res.data));
+    });
+  }
+
   // 관리자로 로그인해 있으면 삭제 버튼 등을 보여줌
   db.auth.getSession().then(function (s) {
     if (!s.data.session) { route(); return; }

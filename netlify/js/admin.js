@@ -97,7 +97,7 @@
     db.rpc("is_admin").then(function (res) {
       if (res.error || !res.data) { show("v-denied"); return; }
       show("v-app");
-      if (!started) { started = true; loadActivities(); loadReceipts(); loadExpenses(); loadCovers(); cleanupOrphans(); loadNotices(); loadFree(); }
+      if (!started) { started = true; loadActivities(); loadReceipts(); loadExpenses(); loadCovers(); cleanupOrphans(); loadNotices(); loadFree(); loadSiteContent(); }
     });
   }
   db.auth.onAuthStateChange(function (event, session) {
@@ -323,6 +323,137 @@
     });
     card.appendChild(f);
     return card;
+  }
+
+  // ---------- 사이트 내용 ----------
+  // p: 저장 경로, l: 이름, m: 최대 글자 수, ml: 여러 줄(Enter 줄바꿈·**굵게**)
+  var SVC_FIELDS = [];
+  Object.keys(cfg.services).forEach(function (k) {
+    var n = cfg.services[k].name;
+    SVC_FIELDS.push({ p: k + ".tag", l: n + " · 이름표", m: 8 }, { p: k + ".name", l: n + " · 사업 이름", m: 20 }, { p: k + ".desc", l: n + " · 설명", m: 160, ml: true });
+  });
+  var SCHEMA = [
+    { key: "hero", title: "첫 화면", fields: [
+      { p: "slogan1", l: "슬로건 1줄", m: 20 }, { p: "slogan2", l: "슬로건 2줄", m: 20 }, { p: "slogan3", l: "슬로건 3줄", m: 20 },
+      { p: "title", l: "큰 제목", m: 60, ml: true }, { p: "intro", l: "소개 문장", m: 220, ml: true }] },
+    { key: "about", title: "소개", fields: [
+      { p: "title", l: "제목", m: 40 }, { p: "lead", l: "소개글", m: 320, ml: true },
+      { p: "problemTitle", l: "왼쪽 상자 제목", m: 25 }, { p: "problemText", l: "왼쪽 상자 내용", m: 160, ml: true },
+      { p: "answerTitle", l: "오른쪽 상자 제목", m: 25 }, { p: "answerText", l: "오른쪽 상자 내용", m: 160, ml: true }] },
+    { key: "services", title: "주요사업 (카드 글)", fields: SVC_FIELDS },
+    { key: "story", title: "연혁 · 숫자", fields: [
+      { p: "lead", l: "소개 문장", m: 120, ml: true }, { p: "note", l: "숫자 기준 (예: 2025년 기준)", m: 20 }],
+      lists: [
+        { p: "stats", l: "숫자", min: 1, max: 6, cols: [{ p: "num", l: "숫자", m: 8, w: "1fr" }, { p: "unit", l: "단위", m: 3, w: "80px" }, { p: "label", l: "설명", m: 16, w: "2fr" }] },
+        { p: "history", l: "연혁", min: 1, max: 40, cols: [{ p: "date", l: "날짜 (예: 2025.11)", m: 7, w: "120px" }, { p: "text", l: "내용", m: 120, w: "1fr" }] }] },
+    { key: "consulting", title: "교육컨설팅", fields: [
+      { p: "title", l: "제목", m: 40 }, { p: "lead", l: "소개글", m: 360, ml: true }],
+      lists: [{ p: "steps", l: "단계", min: 2, max: 6, cols: [{ p: "title", l: "단계 이름", m: 12, w: "1fr" }, { p: "text", l: "설명", m: 50, w: "2fr" }] }] },
+    { key: "donation", title: "기부금 · 후원 계좌", fields: [
+      { p: "lead", l: "소개글", m: 160, ml: true },
+      { p: "account.bank", l: "후원 계좌 은행", m: 20 }, { p: "account.number", l: "계좌번호", m: 30 }, { p: "account.holder", l: "예금주", m: 30 }] },
+    { key: "footer", title: "하단", fields: [{ p: "address", l: "주소", m: 80 }] }
+  ];
+  var siteDefaults = null;
+  function loadSiteContent() {
+    var wrap = $("txt-list");
+    var openKeys = Array.prototype.map.call(wrap.querySelectorAll("details[open]"), function (x) { return x.dataset.key; });
+    var first = !wrap.children.length;
+    wrap.textContent = ""; wrap.appendChild(el("p", "hint", "불러오는 중입니다…"));
+    var getDefaults = siteDefaults ? Promise.resolve(siteDefaults) :
+      fetch("./", { cache: "no-store" }).then(function (r) { return r.text(); }).then(function (html) {
+        siteDefaults = window.SiteContent.readAll(new DOMParser().parseFromString(html, "text/html"));
+        siteDefaults.donation = siteDefaults.donation || {};
+        siteDefaults.donation.account = cfg.donationAccount || { bank: "", number: "", holder: "" };
+        return siteDefaults;
+      });
+    Promise.all([getDefaults, db.from("site_content").select("*")]).then(function (r) {
+      if (r[1].error) { fail("사이트 내용 불러오기", r[1].error); return; }
+      var saved = {}; r[1].data.forEach(function (row) { saved[row.key] = row; });
+      wrap.textContent = "";
+      SCHEMA.forEach(function (sec, i) { wrap.appendChild(sectionForm(sec, r[0][sec.key] || {}, saved[sec.key], first ? i === 0 : openKeys.indexOf(sec.key) >= 0)); });
+    }).catch(function (err) { fail("사이트 기본 문구 불러오기", err); });
+  }
+  function textInput(spec, value) {
+    var inp = spec.ml ? el("textarea") : el("input");
+    if (!spec.ml) inp.type = "text"; else inp.style.minHeight = "96px";
+    inp.maxLength = spec.m; inp.value = value || "";
+    return inp;
+  }
+  function sectionForm(sec, def, row, open) {
+    var G = window.SiteContent.get;
+    var cur = row ? row.value : {};
+    var d = el("details", "txt-sec"); d.dataset.key = sec.key; if (open) d.open = true;
+    var sum = el("summary"); sum.appendChild(el("b", null, sec.title));
+    sum.appendChild(el("span", "state", row ? "수정됨 · " + (row.updated_by || row.created_by || "") + " · " + dot(String(row.updated_at).slice(0, 10)) : "기본 문구 사용 중"));
+    d.appendChild(sum);
+    var f = el("form"); var inputs = [];
+    sec.fields.forEach(function (spec) {
+      var v = G(cur, spec.p); if (v == null || v === "") v = G(def, spec.p);
+      var lab = el("label"); var cnt = el("span", "count");
+      var head = el("span", null, spec.l + " "); head.appendChild(cnt); lab.appendChild(head);
+      var inp = textInput(spec, v);
+      function upd() { cnt.textContent = "(" + inp.value.length + "/" + spec.m + ")"; }
+      inp.addEventListener("input", upd); upd();
+      lab.appendChild(inp); f.appendChild(lab); inputs.push({ spec: spec, inp: inp });
+    });
+    var listEds = [];
+    (sec.lists || []).forEach(function (ls) {
+      var items = Array.isArray(G(cur, ls.p)) && G(cur, ls.p).length ? G(cur, ls.p) : (G(def, ls.p) || []);
+      f.appendChild(el("h3", null, ls.l + " (최대 " + ls.max + "개)"));
+      var rowsBox = el("div", "lrows"); f.appendChild(rowsBox);
+      var cols = ls.cols.map(function (c) { return c.w; }).join(" ") + " auto auto";
+      var add = el("button", "btn ghost small", "+ " + ls.l + " 추가"); add.type = "button";
+      function refresh() { add.disabled = rowsBox.children.length >= ls.max; }
+      function addRow(item) {
+        var r = el("div", "lrow"); r.style.gridTemplateColumns = cols;
+        ls.cols.forEach(function (c) {
+          var inp = el("input"); inp.type = "text"; inp.maxLength = c.m; inp.placeholder = c.l; inp.setAttribute("aria-label", c.l);
+          inp.value = (item && item[c.p]) || ""; inp.dataset.col = c.p; r.appendChild(inp);
+        });
+        var up = el("button", "btn ghost small", "↑"); up.type = "button"; up.title = "위로";
+        up.addEventListener("click", function () { if (r.previousSibling) rowsBox.insertBefore(r, r.previousSibling); });
+        var rm = el("button", "btn danger small", "빼기"); rm.type = "button";
+        rm.addEventListener("click", function () { r.remove(); refresh(); });
+        r.appendChild(up); r.appendChild(rm); rowsBox.appendChild(r); refresh();
+      }
+      items.forEach(addRow);
+      add.addEventListener("click", function () { addRow(null); rowsBox.lastChild.querySelector("input").focus(); });
+      f.appendChild(add);
+      listEds.push({ spec: ls, box: rowsBox });
+    });
+    var btns = el("div", "row"); btns.style.marginTop = "8px";
+    var save = el("button", "btn", "저장"); save.type = "submit"; btns.appendChild(save);
+    if (row) btns.appendChild(deleteButton(function () {
+      db.from("site_content").delete().eq("key", sec.key).then(function (res) {
+        if (res.error) { fail("되돌리기", res.error); return; }
+        toast(sec.title + ": 기본 문구로 되돌렸습니다."); loadSiteContent();
+      });
+    }, "기본 문구로 되돌리기"));
+    f.appendChild(btns);
+
+    f.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var value = {};
+      inputs.forEach(function (x) { window.SiteContent.set(value, x.spec.p, x.inp.value.trim()); });
+      for (var i = 0; i < listEds.length; i++) {
+        var ls = listEds[i].spec;
+        var items = Array.prototype.map.call(listEds[i].box.children, function (r) {
+          var it = {}; r.querySelectorAll("input").forEach(function (inp) { it[inp.dataset.col] = inp.value.trim(); }); return it;
+        }).filter(function (it) { return Object.keys(it).some(function (k) { return it[k]; }); });
+        if (items.length < ls.min) { toast(ls.l + "은(는) " + ls.min + "개 이상 있어야 합니다.", true); return; }
+        window.SiteContent.set(value, ls.p, items);
+      }
+      save.disabled = true;
+      db.from("site_content").upsert({ key: sec.key, value: value }).then(function (res) {
+        save.disabled = false;
+        if (res.error) { fail("저장", res.error); return; }
+        toast(sec.title + ": 저장했습니다. 사이트에 바로 반영됩니다.");
+        loadSiteContent();
+      });
+    });
+    d.appendChild(f);
+    return d;
   }
 
   // ---------- 공지사항 ----------

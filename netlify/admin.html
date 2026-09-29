@@ -95,6 +95,21 @@
   .cover form { padding: 16px 24px 24px; gap: 8px; }
   .cover .state { font-size: 13px; line-height: 18px; color: var(--muted); }
 
+  .txt-sections { display: flex; flex-direction: column; gap: 16px; }
+  .txt-sec { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; }
+  .txt-sec > summary { list-style: none; cursor: pointer; padding: 16px 24px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .txt-sec > summary::-webkit-details-marker { display: none; }
+  .txt-sec > summary::before { content: "▸"; color: var(--muted); }
+  .txt-sec[open] > summary::before { content: "▾"; }
+  .txt-sec > summary b { font-family: var(--display); font-size: 18px; font-weight: 800; }
+  .txt-sec .state { margin-left: auto; font-size: 13px; color: var(--muted); }
+  .txt-sec form { padding: 0 24px 24px; max-width: 760px; }
+  .txt-sec h3 { font-size: 15px; font-weight: 800; margin: 8px 0 0; }
+  .count { font-weight: 400; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .lrows { display: flex; flex-direction: column; gap: 8px; }
+  .lrow { display: grid; gap: 8px; align-items: center; }
+  .lrow .btn { padding: 8px 12px; }
+
   .toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: #fff; font-size: 15px; padding: 12px 24px; border-radius: 9999px; max-width: calc(100% - 32px); }
   .toast.err { background: var(--primary-strong); }
 </style>
@@ -138,6 +153,7 @@
     <!-- 관리 화면 -->
     <div id="v-app" hidden>
       <div class="tabs" role="tablist">
+        <button type="button" role="tab" aria-selected="false" data-tab="txt">사이트 내용</button>
         <button type="button" role="tab" aria-selected="true" data-tab="act">활동 기록</button>
         <button type="button" role="tab" aria-selected="false" data-tab="rcv">기부금 모금</button>
         <button type="button" role="tab" aria-selected="false" data-tab="exp">기부금 사용</button>
@@ -145,6 +161,17 @@
         <button type="button" role="tab" aria-selected="false" data-tab="ntc">공지사항</button>
         <button type="button" role="tab" aria-selected="false" data-tab="fre">자유게시판</button>
       </div>
+
+      <!-- 사이트 내용 -->
+      <section data-pane="txt" hidden>
+        <div class="panel" style="margin-bottom:16px">
+          <h2>사이트 내용</h2>
+          <p style="margin:0">사이트의 글·숫자·연혁을 고칩니다. 저장하면 사이트에 바로 반영됩니다.
+            <b>Enter</b>로 줄을 바꾸고, <b>**글자**</b>처럼 감싸면 굵게 보입니다. 비워둔 칸은 기본 문구가 보입니다.
+            색·배치·메뉴와 공익위반 제보 링크는 여기서 바꿀 수 없습니다.</p>
+        </div>
+        <div class="txt-sections" id="txt-list"></div>
+      </section>
 
       <!-- 활동 기록 -->
       <section data-pane="act" class="grid">
@@ -269,6 +296,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
 <script src="js/config.js"></script>
+<script src="js/content.js"></script>
 <script src="js/admin.js"></script>
 </body>
 </html>
